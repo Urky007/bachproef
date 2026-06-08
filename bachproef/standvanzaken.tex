@@ -6,46 +6,270 @@
 % bijzonder aan wat de link is met het vorige en volgende hoofdstuk.
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
+\section{Waarom Privileged Access Management implementeren}
+\label{ch:waarom-pam-implementeren}
+De implementatie van Privileged Access Management wordt vandaag sterk aanbevolen vanuit meerdere invalshoeken. Enerzijds spelen Europese en Belgische wettelijke verplichtingen een belangrijke rol, vooral in het kader van de NIS2-richtlijn rond cybersecurity. (zie ~\ref{regelgeving-en-compliance-eu-en-belgie}). Anderzijds sluiten PAM-oplossingen nauw aan bij internationale security-frameworks en best practices zoals Identity & Access Management (IAM), Zero Trust-architecturen en OWASP-gerelateerde securityprincipes (zie ~\ref{security-frameworks-en-cybersecurity-best-practices}). Daarnaast tonen recente studies, marktanalyses en whitepapers aan dat het beheer van privileged accounts essentieel is geworden voor het beperken van cyberrisico’s en het versterken van de algemene cyberweerbaarheid van organisaties. (zie ~\ref{cybersecurity-trends-en-strategisch-belang})
+Deze strategische relevantie van PAM komt eveneens naar voren binnen de casestudies van Ahold Delhaize die later in deze bachelorproef worden besproken, waarbij PAM niet enkel wordt beschouwd als een technische beveiligingsoplossing, maar ook als een platform voor governance, compliance en gecontroleerde toegang binnen complexe enterprise-omgevingen.
 
-Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+\subsection{Regelgeving en compliance (EU en België)}
+\label{regelgeving-en-compliance-eu-en-belgie}
+De Europese NIS2-richtlijn heeft als doel de cyberweerbaarheid van organisaties in kritieke en belangrijke sectoren te versterken. (\cite{NIS2_2022}) . Deze richtlijn verplicht organisaties onder meer om robuuste cybersecuritymaatregelen te implementeren, incidenten tijdig te rapporteren en risico’s rond digitale infrastructuur systematisch te beheren. België heeft deze richtlijn op 17 mei 2024 omgezet in nationale wetgeving (\cite{BelgischeNIS2Wet2024}).  Organisaties die niet voldoen aan deze verplichtingen riskeren aanzienlijke sancties, waaronder hoge boetes en mogelijke aansprakelijkheid van het management. 
 
-Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
+Hoewel de richtlijn PAM niet expliciet als verplicht instrument voorschrijft, sluiten de vereisten ervan nauw aan bij de functionaliteiten van PAM-oplossingen. Zo benadrukt NIS2 het belang van strikte toegangscontrole, monitoring van privileged accounts, incident logging en auditing. PAM ondersteunt deze vereisten door onder meer uitgebreide logging, sessiemonitoring, password management en het afdwingen van least-privilege toegangsrechten. Hierdoor wordt PAM in de praktijk vaak beschouwd als een essentieel hulpmiddel om aan NIS2-compliancevereisten te voldoen. Ook binnen de strategische PAM-roadmap van Ahold Delhaize werden governance, auditing, compliance monitoring en gecontroleerde onboarding van privileged accounts als belangrijke vereisten beschouwd.
 
-\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
+Daarnaast legt NIS2 expliciet nadruk op supply chain security, incident reporting en cybersecurity. PAM kan bijdragen door gecontroleerde toegang voor externe partners en leveranciers te faciliteren, evenals door audit trails te voorzien die bij incidenten de analyse ondersteund (\cite{hsu2021pam}). 
 
-Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
+\subsection{Security frameworks en cybersecurity best practices}
+\label{security-frameworks-en-cybersecurity-best-practices}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{grail.jpg}
-  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
+Naast wettelijke verplichtingen zoals NIS2 wordt Privileged Access Management sterk aanbevolen binnen internationale security-frameworks en erkende cybersecurity best practices. 
+
+Moderne securitymodellen vertrekken steeds vaker vanuit het Zero Trust-principe, waarbij geen enkele gebruiker of systeem automatisch wordt vertrouwd en toegang continu wordt gevalideerd. (\cite{nist_zta_800_207}) Deze principes sluiten nauw aan bij moderne PAM-strategieën waarbij organisaties evolueren naar tijdelijke privilege-elevatie en Zero Standing Privileges, zoals ook zichtbaar is binnen de PAM-roadmap van Ahold Delhaize.
+
+Een van de meest erkende bronnen binnen cybersecurity best practices is de OWASP Foundation (Open Web Application Security Project)(\cite{OWASPTop10_2021}). OWASP publiceert onder meer de OWASP Top 10, een periodiek geactualiseerde lijst van de meest kritieke beveiligingsrisico’s voor webapplicaties.
+Binnen de OWASP Top 10 zijn verschillende categorieën rechtstreeks relevant voor privileged access:
+
+\paragraph{A01: Broken Access Control}
+Broken Access Control verwijst naar situaties waarin gebruikers toegang kunnen verkrijgen tot functionaliteiten of gegevens waarvoor zij geen rechten hebben. Dit kan het gevolg zijn van:
+
+\begin{itemize}
+	\item Onvoldoende rolgebaseerde toegangscontrole
+	\item Directe URL-manipulatie
+	\item Onbeperkte administratieve privileges
+	\item Ontbrekende server-side validatie
+\end{itemize}
+PAM-oplossingen adresseren dit risico door:
+\begin{itemize}
+	\item	Strikte rolgebaseerde toegangscontrole
+	\item	Tijdelijke privilege-elevatie
+	\item	Centralisatie van beheertoegang
+	\item	Logging van alle sessies
+\end{itemize}
+\paragraph{A07: Identification and Authentication Failures}
+Deze categorie omvat fouten in authenticatie- en sessiebeheer, zoals:
+\begin{itemize}
+	\item Zwakke wachtwoordbeveiliging
+	\item Ontbreken van multi-factor authenticatie
+	\item Langdurige of onbeperkte sessies
+	\item Onvoldoende bescherming van credentials
+\end{itemize}
+PAM beperkt deze risico’s door:
+\begin{itemize}
+	\item	Multi-factor authenticatie bij privilege-elevatie
+	\item	Automatische wachtwoordrotatie
+	\item	Centrale opslag van credentials in een beveiligde vault
+	\item	Tijdgebonden toegangssessies
+\end{itemize}
+\paragraph{A09: Security Logging and Monitoring Failures}
+
+Gebrek aan logging en monitoring verhindert tijdige detectie van misbruik. Privileged accounts zonder adequate logging vormen een bijzonder hoog risico. De nood aan uitgebreide auditing en sessiemonitoring kwam eveneens sterk naar voren binnen de casestudies van Ahold Delhaize, waar beperkte logging en onvoldoende zicht op privileged activiteiten werden beschouwd als belangrijke tekortkomingen binnen de bestaande omgeving.
+
+PAM-oplossingen bieden uitgebreide sessielogging en -recording, waardoor:
+\begin{itemize}
+	\item Activiteiten van beheerders volledig traceerbaar zijn
+	\item Incidentrespons versneld kan worden
+	\item Audit trails beschikbaar zijn voor compliance-doeleinden
+\end{itemize}
+
+\subsection{Cybersecurity trends en strategisch belang}
+\label{cybersecurity-trends-en-strategisch-belang}
+
+Naast regelgeving en frameworks speelt ook de evolutie van het cyberdreigingslandschap een belangrijke rol in de toenemende aandacht voor PAM. Organisaties beheren vandaag niet alleen menselijke gebruikersaccounts, maar ook een exponentieel groeiend aantal machine-identiteiten, service accounts en applicatieaccounts (\cite{ForresterWavePIM2025} \cite{KuppingerColePAM2024}, \cite{GartnerMagicQuadrantPAM2025}).  Deze toename creëert complexiteit en verhoogt het risico op misbruik van privileged toegang. Deze toenemende complexiteit komt eveneens terug binnen grote internationale organisaties zoals Ahold Delhaize, waar meerdere regionale PAM-omgevingen, verschillende identiteiten en hybride infrastructuren leidden tot bijkomende governance- en beheeruitdagingen.
+
+De studie “Privileged Access Management and Regulatory Compliance” toont aan dat organisaties met volwassen PAM-implementaties doorgaans betere compliance realiseren en een significante vermindering zien in aanvallen op privileged accounts (\cite{Mandru2024PAMCompliance}). Zo rapporteerde dit onderzoek dat ongeveer 78\% van organisaties een verbetering in compliance vaststelde na implementatie van PAM, terwijl privileged account attacks aanzienlijk afnamen. (Zie figuur \ref{fig:pamImplementatie})
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{resultaatPamImplementatie.png}
+	\caption[Resultaat van PAM implementatie in "Privileged Access Management and Regulatory Compliance (\cite{Mandru2024PAMCompliance}).]{\label{fig:pamImplementatie}Resultaat van PAM implementatie in "Privileged Access Management and Regulatory Compliance (\cite{Mandru2024PAMCompliance})}
 \end{figure}
 
-\begin{listing}
-  \begin{minted}{python}
-    import pandas as pd
-    import seaborn as sns
+Marktanalyses en onderzoeksrapporten wijzen erop dat organisaties met een PAM-implementatie doorgaans een hogere mate van compliance realiseren (\cite{ForresterWavePIM2025}). PAM-oplossingen ondersteunen logging, toegangscontrole en tijdelijke privilege-elevatie, wat bijdraagt aan betere naleving van regelgeving en internationale best practices.
 
-    penguins = sns.load_dataset('penguins')
-    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
-  \end{minted}
-  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
-\end{listing}
+\subsection{Technische verdieping van SSH en RDP}
+\label{technische-verdieping-van-ssh-en-rdp}
 
-\lipsum[7-20]
+Aangezien de centrale onderzoeksvraag expliciet focust op de beveiliging van servertoegang via SSH en RDP binnen een bedrijfsnetwerk, is het noodzakelijk om deze protocollen technisch nader te analyseren. De beveiligingsrisico’s, authenticatiemechanismen en potentiële aanvalsvectoren van deze specifieke toegangsmethoden vormen immers de basis voor het evalueren van de meerwaarde van een Privileged Access Management oplossing.
 
-\begin{table}
-  \centering
-  \begin{tabular}{lcr}
-    \toprule
-    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
-    $\alpha$         & $\beta$          & $\gamma$         \\
-    \midrule
-    A                & 10.230           & a                \\
-    B                & 45.678           & b                \\
-    C                & 99.987           & c                \\
-    \bottomrule
-  \end{tabular}
-  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
-\end{table}
+Een grondig begrip van de werking en kwetsbaarheden van SSH en RDP is essentieel om te kunnen beoordelen in welke mate PAM functionaliteiten zoals Just-in-Time toegang, sessielogging, credential vaulting en toegangscontrole effectief bijdragen aan het beperken van risico’s. De technische verdieping in dit hoofdstuk sluit daarom rechtstreeks aan bij de onderzoeksvraag en vormt de noodzakelijke theoretische onderbouw voor de proof of concept die in een later hoofdstuk wordt uitgewerkt.
+
+\subsubsection{Secure Shell (SSH)}
+
+\paragraph{Architectuur en werking}
+Secure Shell is een cryptografisch netwerkprotocol dat wordt gebruikt voor veilige communicatie over een onbeveiligd netwerk (\cite{rfc4251}). Het wordt voornamelijk ingezet voor beheer op afstand van Linux-servers, netwerkapparatuur en andere Unix-gebaseerde systemen.
+
+SSH werkt volgens een client-servermodel:
+\begin{enumerate}
+	\item De client initieert een verbinding naar de SSH-server (standaard TCP-poort 22).
+	\item Tijdens de initiële handshake vindt sleuteluitwisseling plaats via asymmetrische cryptografie (bijvoorbeeld Diffie-Hellman).
+	\item Er wordt een sessiesleutel gegenereerd voor symmetrische versleuteling.
+	\item Authenticatie van de gebruiker gebeurt via:
+	\begin{itemize}
+		\item Wachtwoordauthenticatie
+		\item Public key authenticatie
+		\item Kerberos of andere federatieve mechanismen
+	\end{itemize}
+\end{enumerate}
+\paragraph{Beveiligingsmechanismen}
+SSH biedt standaard:
+\begin{itemize}
+	\item End-to-end encryptie
+	\item Integriteitscontrole via MAC (Message Authentication Codes)
+	\item Serverauthenticatie via host keys
+	\item Optioneel: public key-based authenticatie
+\end{itemize}
+\paragraph{Technische risico’s van SSH}
+Ondanks de sterke cryptografie ontstaan risico’s voornamelijk door configuratie en beheer:
+\subparagraph{Misbruik van private keys}
+Wanneer de sleutels onvoldoende worden afgeschermd, op meerdere systemen worden gekopieerd of geen passphrase bevatten, kan een aanvaller volledige toegang tot het systeem verkrijgen.
+\subparagraph{gedeelde accounts}
+Het gebruik van generieke accounts zoals “root” of “admin” maakt het onmogelijk om individuele acties te traceren.
+\subparagraph{Permanent verhoogde rechten}
+Wanneer gebruikers standaard root- of sudo-rechten hebben, ontstaat een verhoogd risico op privilege misbruik (\cite{nist_zta_800_207}).
+\subparagraph{Credential dumping}
+Aanvallers kunnen via technieken zoals SSH-agent forwarding misbruik, Memory scraping, Key extraction, credentials verzamelen om zo toegang tot de systemen te verkrijgen (\cite{mitre_t1003}).
+\subparagraph{Laterale beweging}
+Na initiële toegang kan SSH worden gebruikt om zich lateraal te verplaatsen binnen het netwerk (\cite{mitre_lateral_movement}).
+
+\subsubsection{Remote Desktop Protocol(RDP)}
+\paragraph{Architectuur en werking}
+Remote Desktop Protocol is een door Microsoft ontwikkeld protocol dat grafische remote toegang mogelijk maakt tot Windows-systemen. RDP gebruikt standaard TCP-poort 3389 (\cite{microsoft_rdp}).
+
+In tegenstelling tot SSH biedt RDP een grafische gebruikersinterface (GUI) waarmee gebruikers een volledige desktopsessie op afstand kunnen overnemen.
+
+Het protocol ondersteunt daarnaast functionaliteiten zoals bestandsdeling, printerredirectie en clipboard-forwarding, waardoor lokale en externe bronnen geïntegreerd kunnen worden binnen de remote sessie. 
+
+Authenticatie binnen RDP gebeurt doorgaans via Windows Authentication, waarbij gebruik kan worden gemaakt van Network Level Authentication (NLA) en onderliggende protocollen zoals Kerberos of NTLM. Bovendien kunnen RDP-sessies worden versleuteld via Transport Layer Security (TLS) om de vertrouwelijkheid en integriteit van de communicatie te waarborgen.
+\paragraph{Beveiligingsmechanismen}
+RDP ondersteunt:
+\begin{itemize}
+	\item Network Level Authentication
+	\item TLS-encryptie
+	\item Account lockout policies
+	\item Multi-factor authenticatie (indien geïntegreerd)
+\end{itemize}
+\paragraph{Technische risico’s van SSH}
+\subparagraph{Brute force aanvallen}
+RDP is een frequent doelwit van internet-scanning bots. Open RDP-poorten worden systematisch aangevallen via brute force. (\cite{VerizonDBIR2024})
+\subparagraph{Pass-the-Hash (PtH)}
+Aanvallers kunnen NTLM-hashes hergebruiken zonder het originele wachtwoord te kennen.
+(\cite{MITREPassTheHash})
+
+\subparagraph{Credential dumping (Mimikatz)}
+Tools zoals Mimikatz kunnen credentials uit het geheugen van Windows-systemen halen.
+(\cite{MITREPassTheHash})
+
+\subparagraph{Sessiekaping}
+Onvoldoende beveiligde sessies kunnen worden overgenomen.
+(\cite{MicrosoftDigitalDefenseReport2024})
+
+\subparagraph{Lateral Movement}
+Na initiële compromittering wordt RDP vaak gebruikt om zich lateraal te verplaatsen binnen een Active Directory-omgeving.
+
+\subsubsection{Waarom PAM noodzakelijk is voor SSH en RDP}
+SSH en RDP voorzien zelf geen:
+\begin{itemize}
+	\item Centrale credential vault
+	\item Just-in-Time toegang
+	\item Geautomatiseerde wachtwoordrotatie
+	\item Volledige sessierecording
+	\item Toegangsgoedkeuringsworkflows
+\end{itemize}
+
+Hierdoor blijft het risico bestaan dat beheerders permanente privileges hebben en dat misbruik pas achteraf wordt gedetecteerd.
+
+PAM oplossingen fungeren als tussenlaag tussen gebruiker en server, waardoor:
+\begin{itemize}
+	\item Directe verbindingen worden geblokkeerd
+	\item Tijdelijke toegang wordt afgedwongen
+	\item Sessies worden opgenomen
+	\item Credentials niet rechtstreeks zichtbaar zijn voor gebruikers
+\end{itemize}
+Deze gecontroleerde aanpak sluit aan bij de operationele implementatie die later in deze bachelorproef wordt besproken, waarbij CyberArk binnen een storageomgeving wordt gebruikt om directe verbindingen te blokkeren, credentials centraal te beheren en alle privileged sessies te registreren (\cite{hsu2021pam}).
+
+Uit de voorgaande technische analyse blijkt dat zowel SSH als RDP sterke cryptografische beveiligingsmechanismen bieden voor vertrouwelijke communicatie en authenticatie (\cite{rfc4251,microsoft_rdp}). Deze mechanismen beschermen de communicatie tegen afluisteren en manipulatie, maar ze voorzien niet in uitgebreide controle op het gebruik van verhoogde rechten (\cite{nist_zta_800_207}).
+
+De beveiligingsrisico’s die eerder werden beschreven ontstaan niet door een gebrek aan cryptografie, maar door tekortkomingen in toegangsbeheer en privilegecontrole (\cite{nist_zta_800_207}). Zowel SSH als RDP laten toe dat gebruikers langdurige of permanente verhoogde rechten behouden. Dit zonder centrale controle over wie wanneer welke acties uitvoert (\cite{nist_zta_800_207}).
+
+Daarnaast voorzien deze protocollen standaard niet in een centrale credential vault, Just-in-Time toegangsverlening, geautomatiseerde wachtwoordrotatie, volledige sessierecording of formele goedkeuringsworkflows voor administratieve toegang (\cite{hsu2021pam}). Hierdoor bestaat het risico dat privileged accounts langdurig actief blijven en dat misbruik pas achteraf wordt vastgesteld via beperkte logbestanden (\cite{mitre_t1003,mitre_lateral_movement}).
+
+Privileged Access Management oplossingen introduceren daarom een bijkomende controle laag tussen de gebruiker en de doelserver (\cite{nist_zta_800_207}). In plaats van directe SSH- of RDP-verbindingen tot stand te brengen, wordt toegang gefaciliteerd via het PAM platform (\cite{hsu2021pam}). Dit maakt het mogelijk om directe verbindingen te blokkeren, tijdelijke privilege-elevatie af te dwingen en alle administratieve sessies volledig te registreren (\cite{hsu2021pam}). Bovendien worden credentials centraal opgeslagen in een beveiligde kluis, waardoor wachtwoorden of private keys niet rechtstreeks zichtbaar of herbruikbaar zijn voor eindgebruikers.
+
+PAM fungeert hiermee als een technisch controlemechanisme dat de beperkingen van SSH en RDP op het vlak van privilegebeheer compenseert en structurele beveiligingsmaatregelen toevoegt boven op de bestaande protocollen (\cite{nist_zta_800_207}).
+
+\section{Alternatieven voor PAM}
+Hoewel PAM een centrale rol speelt in het beveiligen van toegang tot kritieke systemen, bestaat er geen rechtstreeks alternatief dat dezelfde functionaliteit volledig kan vervangen. PAM-oplossingen combineren immers verschillende beveiligingsmechanismen in één geïntegreerd platform, waaronder credentialbeheer, sessiemonitoring, toegangscontrole en audit logging (\cite{GartnerMagicQuadrantPAM2025}). Deze geïntegreerde aanpak maakt het mogelijk om privileged access op een gecontroleerde en traceerbare manier te beheren, wat essentieel is binnen moderne cybersecuritystrategieën.
+
+Wanneer organisaties geen gebruik maken van een PAM-oplossing, betekent dit echter niet dat ze niet kunnen voldoen aan de vereisten van de NIS2-richtlijn. In dat geval moeten zij een combinatie van verschillende beveiligingsmaatregelen implementeren die samen een gelijkaardig beveiligingsniveau kunnen bieden. Waar PAM deze functionaliteiten centraliseert, vereist een alternatieve aanpak een samenhang tussen meerdere technologieën en processen (\cite{enisa2023}).
+
+Een eerste belangrijk element in deze alternatieve benadering is Identity & Access Management (IAM). IAM-oplossingen maken het mogelijk om gebruikersidentiteiten en toegangsrechten centraal te beheren en ondersteunen het afdwingen van het least privilege-principe (\cite{nist2020}). In combinatie met Multi-Factor Authentication (MFA) kan de beveiliging van accounts verder worden versterkt, doordat toegang afhankelijk wordt gemaakt van meerdere authenticatiefactoren. Dit wordt ook expliciet aanbevolen binnen Europese cybersecurityrichtlijnen als maatregel tegen ongeautoriseerde toegang (\cite{enisa2023}).
+
+Daarnaast spelen netwerkbeveiligingsmaatregelen een belangrijke rol. Door middel van netwerksegmentatie en firewallconfiguraties kunnen organisaties de toegang tot systemen beperken en de impact van een mogelijke compromittering reduceren. Deze aanpak sluit aan bij het Zero Trust-model, waarbij geen enkele gebruiker of systeem standaard wordt vertrouwd en toegang continu wordt gevalideerd (\cite{nist2020}).
+
+Monitoring en detectie vormen eveneens een essentieel onderdeel van een NIS2-conforme beveiligingsstrategie. Security Information and Event Management (SIEM)-systemen verzamelen en analyseren loggegevens uit verschillende bronnen, terwijl Endpoint Detection and Response (EDR)-oplossingen gericht zijn op het detecteren en beantwoorden van verdachte activiteiten op endpoints. Deze technologieën dragen bij aan een verhoogde zichtbaarheid binnen de IT-omgeving en ondersteunen organisaties bij het tijdig detecteren en rapporteren van incidenten, zoals vereist door NIS2 (\cite{enisa2023}; \cite{microsoft2024}).
+
+Tot slot spelen ook beveiligingsstandaarden en best practices een belangrijke rol. Richtlijnen zoals de CIS Benchmarks bieden concrete aanbevelingen voor het veilig configureren van systemen en applicaties. Door deze standaarden te volgen, kunnen organisaties kwetsbaarheden proactief beperken en aantonen dat zij passende technische maatregelen hebben genomen (\cite{cis2024}).
+
+Samenvattend kan gesteld worden dat er geen volwaardig alternatief bestaat voor PAM als geïntegreerde oplossing. Organisaties kunnen echter wel een vergelijkbaar beveiligingsniveau bereiken door een combinatie van verschillende technologieën en processen te implementeren. Deze aanpak vereist doorgaans een hogere mate van complexiteit en coördinatie, maar kan, indien correct toegepast, bijdragen aan het behalen van compliance met de NIS2-richtlijn. De casestudies binnen deze bachelorproef tonen echter aan dat grote enterprise-organisaties PAM vaak verkiezen boven een gefragmenteerde combinatie van losse beveiligingsmaatregelen, omdat PAM centrale governance, auditing en gecontroleerde privilege-elevatie binnen één platform samenbrengt.
+
+\section{Oplossingen op de markt voor Privileged Access Management}
+
+Om de risico’s rond privileged accounts, compliancevereisten en cyberdreigingen te beheersen, bestaat er vandaag een brede markt van PAM oplossingen. 
+
+De PAM markt groeit sterk door digitalisering, cloudgebruik en strengere regelgeving (Gartner \cite{GartnerMagicQuadrantPAM2025}). Analyses tonen aan dat organisaties steeds vaker PAM integreren binnen bredere identity security platforms, waarbij functionaliteiten zoals identity governance, threat detection en cloud privilege management worden gecombineerd (Forester, \cite{ForresterWavePIM2025}).
+
+De marktanalyse binnen dit onderzoek is gebaseerd op toonaangevende en onafhankelijke onderzoeksrapporten, namelijk het Gartner Magic Quadrant for Privileged Access Management, de Gartner Voice of the Customer (Peer Insights), de KuppingerCole Leadership Compass voor Privileged Access Management en The Forrester Wave™: Privileged Identity Management Solutions. Door deze rapporten te combineren wordt zowel de strategische positionering van leveranciers, de technische maturiteit van oplossingen als de gebruikerservaring meegenomen in de evaluatie. Dit vormt de basis voor de selectie van representatieve PAM-oplossingen die in het verdere verloop van deze bachelorproef worden onderzocht. De selectiecriteria binnen deze bachelorproef sluiten bovendien aan bij de strategische prioriteiten die binnen de casestudies van Ahold Delhaize naar voren komen, waaronder governance, credential vaulting, auditing, automatisatie, Just-in-Time toegang en gebruikservaring.
+
+\subsection{Lijst van PAM tools}
+\subsubsection{Marktleiders (vaak aanbevolen door analisten)}
+
+De gebruikte analistenrapporten identificeren een aantal gevestigde spelers als leiders in de PAM markt. KuppingerCole en Gartner noemen onder andere CyberArk, BeyondTrust, Delinea en ARCON als sterke marktleiders met uitgebreide functionaliteit, wereldwijde aanwezigheid en brede enterprise-adoptie(\cite{KuppingerColePAM2024}, Gartner \cite{GartnerMagicQuadrantPAM2025}).
+\begin{itemize}
+	\item CyberArk – Wordt vaak beschouwd als een referentie in PAM, met sterke capabilities rond secrets management, endpoint privilege management en identity security. 
+	\item BeyondTrust – Biedt uitgebreide PAM functionaliteit inclusief remote access, password vaulting en cloud entitlement management. 
+	\item Delinea – Cloudgerichte PAM oplossing met sterke identity governance en integratie met hybride IT-omgevingen. 
+	\item ARCON – Bekend om uitgebreide compliance- en auditfunctionaliteiten en sterke monitoringmogelijkheden. 
+\end{itemize}
+
+Volgens de Forrester Wave (2025) behoren CyberArk, BeyondTrust en Delinea eveneens tot de belangrijkste PAM leveranciers, met focus op AI-gedreven identity security en automatisering van privileged access ( \cite{ForresterWavePIM2025}).
+
+\subsection{Andere belangrijke enterprise PAM oplossingen}
+Naast de absolute marktleiders zijn er meerdere gevestigde enterprise-spelers met sterke PAM functionaliteit:
+
+\begin{itemize}
+	\item One Identity Safeguard – Sterke integratie met identity governance en IAM-ecosystemen. 
+	\item Saviynt PAM – Focus op analytics en cloud identity governance. 
+	\item Senhasegura PAM – Uitgebreide monitoring en auditfunctionaliteit, groeiende internationale aanwezigheid. 
+	\item WALLIX PAM – Sterke positie in Europa en focus op compliance en gebruiksvriendelijkheid. 
+	\item ManageEngine PAM360 – Vaak gekozen door middelgrote organisaties wegens integratie met IT-managementtools. 
+	\item Netwrix Privilege Secure – Focus op auditing en compliance-gericht privilegebeheer. 
+\end{itemize}
+\subsection{Andere relevante of gespecialiseerde PAM oplossingen}
+De PAM markt bevat daarnaast niche-spelers en gespecialiseerde oplossingen, bijvoorbeeld:
+\begin{itemize}
+	\item Keeper Security PAMStrongDM
+	\item Sectona Security Platform
+	\item SSH PrivX HybridPAM
+	\item Securden
+	\item Broadcom (Symantec PAM)
+	\item EmpowerID
+	\item Kron Technologies PAM
+	\item Heimdal Security PAM
+	\item Syteca PAM
+	\item Bravura Security PAM
+\end{itemize}
+Deze oplossingen variëren van volledige enterprise PAM platformen tot niche-producten gericht op specifieke use cases zoals DevOps-secrets, cloud-privilegebeheer of remote privileged access. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{magicQuadrant.png}
+	\caption[Magic Quadrant for Privileged Access Management (\cite{GartnerMagicQuadrantPAM2025})]{\label{fig:magicQuadrant}Magic Quadrant for Privileged Access Management (\cite{GartnerMagicQuadrantPAM2025})}
+\end{figure}
+
+
+\subsection{Conclusie}
+
+De markt voor Privileged Access Management oplossingen is vandaag zeer divers en evolueert snel door cloudgebruik, regelgeving en toenemende cyberdreigingen. Analisten onderscheiden een kern van gevestigde leiders zoals CyberArk, BeyondTrust en Delinea, aangevuld met andere sterke enterprise-spelers en gespecialiseerde niche-oplossingen. De keuze voor een specifieke PAM oplossing hangt doorgaans af van factoren zoals schaal van de organisatie, cloudstrategie, compliancevereisten, integratiemogelijkheden en budget.
+
+
 

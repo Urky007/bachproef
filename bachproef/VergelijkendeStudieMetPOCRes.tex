@@ -1,0 +1,37 @@
+\chapter{Vergelijkende Studie van de POC-resultaten}
+\label{ch:vergelijkende-Studie-met-poc}
+\section{Inleiding}
+In dit hoofdstuk worden de resultaten van de twee uitgevoerde proof-of-concepts naast elkaar geplaatst en geanalyseerd. Waar in de vorige hoofdstukken vooral de functionaliteiten van zowel PAM360 als Securden afzonderlijk werden besproken, ligt de focus hier op de praktische verschillen die tijdens de implementatie en het gebruik werden vastgesteld.
+
+De vergelijking richt zich niet enkel op technische mogelijkheden, maar ook op toepasbaarheid in een realistische IT-omgeving. Hierbij wordt gekeken naar de mate waarin beide oplossingen in staat zijn om veilige, gecontroleerde en efficiënte privileged access te realiseren, zonder de operationele werking van beheerders onnodig te verstoren.
+
+De evaluatiecriteria sluiten hierbij aan bij de strategische prioriteiten die binnen de casestudies van Ahold Delhaize naar voren kwamen, waaronder governance, auditing, automatisatie, gebruikservaring en gecontroleerde privilege-elevatie.
+
+\section{Technische vergelijking}
+Op technisch vlak bieden zowel PAM360 als Securden ondersteuning voor de kernfunctionaliteiten van Privileged Access Management, zoals credential vaulting, toegangscontrole en sessiebeheer. Toch zijn er duidelijke verschillen in de manier waarop deze functionaliteiten geïmplementeerd en afgedwongen worden.
+
+Een eerste belangrijk verschil situeert zich in de afdwingbaarheid van Just-in-Time toegang. PAM360 biedt een meer uitgebreide en flexibele aanpak waarbij toegangsrechten dynamisch kunnen worden toegekend en automatisch verlopen. Dit laat toe om het principe van least privilege zeer strikt toe te passen. Securden ondersteunt eveneens tijdelijke toegang, maar deze functionaliteit is minder diep geïntegreerd en vereist meer manuele configuratie.
+
+Daarnaast werd vastgesteld dat PAM360 een hoger detailniveau biedt op vlak van logging en auditing. Acties binnen sessies worden uitgebreider geregistreerd, wat het eenvoudiger maakt om achteraf analyses uit te voeren of incidenten te onderzoeken. Securden voorziet basis loggingfunctionaliteit, maar mist in vergelijking met PAM360 eenzelfde diepgang en granulariteit. Uit de casestudies bleek eveneens dat uitgebreide auditing en traceerbaarheid beschouwd worden als essentiële vereisten binnen internationale enterprise-omgevingen.
+
+Op het vlak van sessierecording is er eveneens een verschil in implementatie. Bij Securden is hiervoor een aparte component vereist (Session Manager), wat de complexiteit van de implementatie verhoogt. PAM360 biedt deze functionaliteit meer geïntegreerd aan, wat resulteert in een eenvoudiger beheer en minder afhankelijkheden.
+
+Tot slot blijkt dat toegangscontrole en automatische intrekking van rechten in PAM360 sterker geautomatiseerd zijn. Policies kunnen centraal beheerd worden en worden consistent toegepast, terwijl Securden eerder werkt met een meer directe en account-gebaseerde benadering. Dit maakt Securden eenvoudiger in gebruik, maar minder schaalbaar in complexe omgevingen. Deze policy-gebaseerde aanpak sluit nauw aan bij de enterprise-doelstellingen rond governance, standaardisatie en gecontroleerde onboarding die binnen de strategische PAM-roadmap van Ahold Delhaize werden geïdentificeerd.
+\section{Gebruikerservaring}
+Naast de technische verschillen speelt ook de gebruikerservaring een belangrijke rol in de evaluatie van beide oplossingen. Tijdens de proof-of-concept werd duidelijk dat Securden een meer intuïtieve en toegankelijke interface biedt. De configuratie verloopt relatief eenvoudig en de belangrijkste functionaliteiten zijn snel beschikbaar. Dit maakt de tool bijzonder geschikt voor kleinere omgevingen of situaties waarin snel resultaat nodig is.
+
+PAM360 daarentegen vraagt een grotere initiële inspanning. De configuratie is complexer en vereist een beter begrip van onderliggende concepten zoals policies, rollen en integraties met Active Directory. Deze complexiteit vertaalt zich echter in een krachtigere en flexibelere oplossing, die beter aansluit bij grotere en meer gestructureerde IT-omgevingen. Deze vaststelling sluit aan bij de casestudies binnen Ahold Delhaize, waar eveneens werd vastgesteld dat uitgebreide governance- en automatisatiefunctionaliteiten vaak gepaard gaan met een hogere implementatiecomplexiteit en grotere operationele impact.
+
+Ook op vlak van workflow voor beheerders zijn er verschillen merkbaar. PAM360 biedt een meer gestroomlijnde en gecontroleerde manier van werken, waarbij toegang en acties sterk gestuurd worden door policies. Dit verhoogt de veiligheid, maar kan initieel als minder gebruiksvriendelijk ervaren worden. Securden laat meer directe interactie toe, wat de drempel verlaagt maar ook minder controle biedt. De casestudies tonen bovendien aan dat gebruikservaring en eenvoudige onboarding een belangrijke invloed hebben op de adoptie van PAM-oplossingen binnen operationele teams.
+
+De algemene overhead ligt bij PAM360 hoger, zowel qua configuratie als beheer. Securden scoort hier beter door zijn eenvoud, maar dit gaat ten koste van flexibiliteit en geavanceerde functionaliteiten.
+\section{Beperking van de POC}
+Bij het interpreteren van de resultaten moet rekening gehouden worden met een aantal beperkingen van deze proof-of-concept. De testomgeving wijkt namelijk af van een productieomgeving, waardoor bepaalde aspecten zoals schaalbaarheid, performantie en integratie met bestaande systemen slechts beperkt geëvalueerd konden worden.
+
+Daarnaast speelden ook praktische beperkingen een rol. Zo waren bepaalde functionaliteiten afhankelijk van licenties, waardoor niet alle mogelijkheden volledig getest konden worden. Ook het tijdskader van de bachelorproef beperkte de diepgang van de implementaties.
+
+Ook werd binnen deze bachelorproef bewust gekozen voor een gesimuleerde enterprise-omgeving gebaseerd op de casestudies van Ahold Delhaize. Hoewel dit zorgde voor een realistischere context, blijft de schaal en complexiteit beperkt in vergelijking met een volledig operationele internationale productieomgeving.
+
+Tot slot moet benadrukt worden dat de configuratie van de onderliggende infrastructuur, zoals Active Directory, een belangrijke invloed heeft op de werking van beide tools. Eventuele configuratiefouten of beperkingen in deze omgeving kunnen de resultaten beïnvloeden.
+
+Deze factoren maken dat de resultaten een indicatie geven van de mogelijkheden van beide oplossingen, maar niet als absolute vergelijking in een productiecontext mogen worden beschouwd.

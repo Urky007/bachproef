@@ -25,6 +25,132 @@
 %%
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
+\section{Inleiding}
+Deze bachelorproef werd uitgevoerd als een vergelijkende studie gecombineerd met een proof of concept (PoC). De gekozen aanpak laat toe om zowel theoretische inzichten als praktische toepasbaarheid van Privileged Access Management tools te evalueren. Het onderzoek werd opgesplitst in verschillende fasen, waarbij elke fase een duidelijk doel, methode en resultaat had. Daarnaast werd onderzocht hoe enterprise-organisaties PAM-capabilities prioriteren op basis van governance, beveiliging, compliance en operationele efficiëntie. Hiervoor werden de casestudies binnen Ahold Delhaize gebruikt als praktijkgerichte onderbouwing voor de gekozen vergelijkingscriteria en de opzet van de proof of concept.
 
-\lipsum[21-25]
+\subsection{Fase 0 - CaseStudie}
+\subsubsection{Doel}
+Om de relevantie van deze bachelorproef te versterken werden twee casestudies uitgewerkt binnen Ahold Delhaize. De eerste casestudie behandelt de strategische heroriëntatie van de PAM-omgeving binnen de organisatie en onderzoekt hoe PAM-capabilities worden geprioriteerd op basis van governance, compliance, beveiliging en operationele efficiëntie. Hierbij wordt specifiek gekeken naar aspecten zoals Just-in-Time toegang, credential vaulting, auditing, onboarding en automatisatie.
+De tweede casestudie focust op de operationele implementatie van CyberArk binnen een storageomgeving en vertaalt deze strategische keuzes naar concrete technische vereisten en dagelijkse beheerprocessen.
+De casestudies werden gebruikt om realistische evaluatiecriteria op te stellen voor de vergelijkende studie en vormden eveneens de basis voor de opzet van de proof of concept.
 
+
+\subsection{Fase 1 – Literatuurstudie en marktanalyse}
+\subsubsection{Doel}
+Het doel van deze fase was het verkrijgen van een gestructureerd overzicht van de huidige PAM markt en de positionering van verschillende vendors. Daarnaast werd onderzocht welke functionaliteiten essentieel zijn voor het beveiligen van beheertoegang via SSH en RDP. Hierbij werd eveneens rekening gehouden met de strategische prioriteiten die binnen de casestudies naar voren kwamen, waaronder governance, auditing, credential vaulting, Just-in-Time toegang en automatisatie.
+\subsubsection{Aanpak}
+In deze fase werd een vergelijkende literatuurstudie uitgevoerd op basis van:
+\begin{itemize}
+	\item Gartner Magic Quadrant for Privileged Access Management
+	\item Gartner Voice of the Customer (Peer Insights)
+	\item KuppingerCole Leadership Compass
+	\item The Forrester Wave™ for Privileged Identity Management
+\end{itemize}
+Op basis van deze onafhankelijke marktanalyses werd eerst een longlist opgesteld van relevante PAM oplossingen. Vervolgens werd een selectie gemaakt van vier representatieve tools met verschillende marktposities:
+
+\begin{itemize}
+	\item CyberArk – marktleider
+	\item BeyondTrust – marktleider
+	\item ManageEngine PAM360 – uitdager
+	\item Securden – niche speler
+\end{itemize}
+
+De selectie gebeurde op basis van marktpositie, functionaliteiten, maturiteit en beschikbaarheid voor evaluatie.
+
+\subsubsection{Resultaat / Deliverables}
+Deze fase resulteerde in:
+\begin{itemize}
+	\item Een overzicht van marktleiders, challengers en niche spelers
+	\item Een vergelijkingstabel met functionele kenmerken
+	\item Een onderbouwde short-list van tools voor verdere evaluatie
+\end{itemize}
+
+\subsubsection{Verantwoording}
+Door gebruik te maken van erkende marktanalyses werd een objectieve selectie gemaakt. Deze aanpak vermijdt subjectieve voorkeur en zorgt voor academische onderbouwing.
+
+\subsection{Fase 2 – Vergelijkende studie op basis van literatuur}
+
+\subsubsection{Doel}
+Het doel van deze fase was het systematisch vergelijken van geselecteerde PAM tools op basis van vooraf gedefinieerde criteria.
+\subsubsection{Aanpak}
+Op basis van de literatuur, de onderzoeksvragen en de casestudies binnen Ahold Delhaize werden vergelijkingscriteria opgesteld. Hierbij werd niet uitsluitend gekeken naar technische functionaliteiten, maar ook naar governance, operationele impact, automatisatie en implementatiecomplexiteit binnen enterprise-omgevingen.
+\begin{itemize}
+	\item Ondersteuning voor Just-in-Time (JIT) toegang
+	\item Sessie-logging en sessierecording
+	\item Automatische intrekking van toegangsrechten
+	\item Ondersteuning voor SSH en RDP
+	\item Integratie met bestaande IT-omgevingen
+	\item Gebruiksgemak en implementatiecomplexiteit
+\end{itemize}
+
+De geselecteerde criteria sluiten nauw aan bij de capabilities die binnen de strategische PAM-roadmap van Ahold Delhaize als prioritair werden beschouwd. Functionaliteiten zoals Just-in-Time toegang, auditing, credential vaulting en gecontroleerde onboarding kwamen zowel binnen de literatuurstudie als de casestudies naar voren als essentiële vereisten binnen moderne PAM-omgevingen.
+
+Deze criteria werden toegepast op de vier geselecteerde vendors.
+
+\subsubsection{Resultaat / Deliverables}
+\begin{itemize}
+	\item Een gestructureerde vergelijkingstabel
+	\item Een kwalitatieve analyse van sterke en zwakke punten per tool
+	\item Selectie van twee tools voor praktische evaluatie
+\end{itemize}
+
+\subsection{Fase 3 – Proof of Concept}
+Na de theoretische vergelijking werd een praktische evaluatie uitgevoerd in de vorm van een proof of concept. Deze proof of concept werd gerealiseerd op fysieke machines waarop een gesimuleerd bedrijfsnetwerk werd opgezet. Binnen deze gecontroleerde testomgeving werden servers, netwerkcomponenten en beheerdersaccounts geconfigureerd om een realistische IT-infrastructuur na te bootsen.
+De opzet van deze testomgeving werd gedeeltelijk geïnspireerd door de operationele casestudie binnen Ahold Delhaize, waarbij privileged toegang tot storage-infrastructuur, servers en netwerkcomponenten centraal stond.
+\subsubsection{Doel}
+Het doel van deze fase was het concreet aantonen hoe PAM oplossingen beheertoegang via SSH en RDP kunnen beveiligen in een gesimuleerde bedrijfsomgeving.
+
+\subsubsection{Selectie van tools}
+Op basis van de literatuurstudie werden twee tools geselecteerd voor praktische evaluatie:
+\begin{itemize}
+	\item POC1: ManageEngine PAM360
+	\item POC2: Securden
+\end{itemize}
+Deze selectie laat toe om een uitdager te vergelijken met een niche speler in een realistische testopstelling.
+
+\subsubsection{Opzet van testomgeving}
+De proof of concept werd uitgevoerd in een geïsoleerde testomgeving bestaande uit:
+\begin{itemize}
+	\item Meerdere servers met SSH- en RDP-toegang
+	\item Gesimuleerde beheerdersaccounts
+	\item Centrale PAM server
+	\item Logging- en monitoringconfiguratie
+\end{itemize}
+
+\subsubsection{Uitvoering}
+In de testomgeving werd geëvalueerd in welke mate de oplossingen:
+\begin{itemize}
+	\item Langdurige beheerdersrechten vermijden
+	\item Just-in-Time toegang afdwingen
+	\item Beheerderssessies loggen en opnemen
+	\item Directe, onbeheerde toegang blokkeren
+	\item Toegangsrechten automatisch intrekken
+\end{itemize}
+
+\subsection{Fase 4 – Vergelijkende analyse van PoC-resultaten}
+
+\subsubsection{Doel}
+
+Het doel van deze fase was het analyseren van de praktische verschillen tussen beide geïmplementeerde PAM tools. Naast technische functionaliteiten werd eveneens geëvalueerd in welke mate de oplossingen aansluiten bij de strategische prioriteiten die binnen de casestudies naar voren kwamen, zoals gebruiksgemak, governance, auditing en operationele efficiëntie.
+\subsubsection{Aanpak}
+De resultaten van beide proof-of-concepts werden geëvalueerd aan de hand van meetbare criteria zoals:
+\begin{itemize}
+	\item Implementatiecomplexiteit
+	\item Configuratie-inspanning
+	\item Effectiviteit van toegangscontrole
+	\item Detailniveau van logging
+\end{itemize}
+\subsubsection{Resultaat / Deliverables}
+\begin{itemize}
+	\item Vergelijkende analyse tussen ManageEngine PAM360 en Securden
+	\item Technische evaluatie met screenshots en logbestanden
+	\item Conclusies over praktische toepasbaarheid
+\end{itemize}
+
+\subsection{Verantwoording van de gekozen aanpak}
+
+De combinatie van literatuurstudie en proof of concept werd bewust gekozen om zowel theoretische als praktische inzichten te combineren. Een louter theoretische studie zou onvoldoende aantonen hoe PAM oplossingen in de praktijk functioneren. Anderzijds zou een puur technische testopstelling onvoldoende marktcontext bieden.
+
+Door eerst een gestructureerde marktanalyse uit te voeren en vervolgens een praktische evaluatie te doen, werd een onderbouwde en objectieve beantwoording van de onderzoeksvraag mogelijk gemaakt.
+
+De toevoeging van praktijkgerichte casestudies zorgde bovendien voor een realistische onderbouwing van de gekozen evaluatiecriteria. Hierdoor werd het mogelijk om de theoretische analyse af te toetsen aan concrete enterprise-uitdagingen en operationele vereisten binnen een internationale IT-omgeving.

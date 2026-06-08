@@ -1,0 +1,433 @@
+\chapter{Vergelijkende Studie van PAM-vendors}
+\label{ch:vergelijkende-Studie}
+\section{Inleiding}
+In dit hoofdstuk wordt een vergelijkende studie uitgevoerd tussen verschillende Privileged Access Management oplossingen. Deze studie bouwt verder op de voorgaande literatuurstudie, marktanalyse en case study, en heeft als doel om de geselecteerde oplossingen systematisch te evalueren binnen een realistische context.
+De gekozen vergelijkingscriteria sluiten hierbij nauw aan bij de strategische prioriteiten die binnen de casestudies van Ahold Delhaize naar voren kwamen. Functionaliteiten zoals governance, Just-in-Time toegang, credential vaulting, auditing en gecontroleerde onboarding werden binnen deze enterprise-context beschouwd als essentiële capabilities voor moderne PAM-oplossingen.
+De focus van deze vergelijking ligt op het identificeren van verschillen in aanpak, maturiteit en toepasbaarheid binnen het beveiligen van beheertoegang tot kritieke systemen. Hierbij wordt specifiek gekeken naar omgevingen waarin protocollen zoals SSH en RDP worden gebruikt, aangezien deze een centrale rol spelen binnen de uitgewerkte praktijkcase. 
+Door de oplossingen naast elkaar te plaatsen op basis van uniforme criteria, wordt inzicht verkregen in hun sterke en zwakke punten. Dit maakt het mogelijk om niet alleen een technische vergelijking te maken, maar ook een onderbouwde evaluatie van hun geschiktheid binnen de context van deze bachelorproef.
+
+\section{Selectie van PAM Oplossingen}
+Voor deze vergelijkende studie werd een gerichte selectie gemaakt van vier PAM oplossingen: CyberArk, BeyondTrust, ManageEngine PAM360 en Securden.
+De keuze voor deze oplossingen is gebaseerd op toonaangevende en onafhankelijke marktanalyses, waaronder het Gartner Magic Quadrant, Gartner Voice of the Customer, KuppingerCole Leadership Compass en The Forrester Wave™ (\cite{ForresterWavePIM2025} \cite{KuppingerColePAM2024}, \cite{GartnerMagicQuadrantPAM2025}). Deze rapporten geven een objectief beeld van de positionering van vendors op vlak van functionaliteit, innovatie en marktaanwezigheid.
+Bij de selectie werd bewust gekozen voor oplossingen die verschillende segmenten van de PAM markt vertegenwoordigen. Enerzijds omvat de selectie gevestigde en mature enterprise-oplossingen, anderzijds meer toegankelijke oplossingen gericht op kleinere of minder complexe omgevingen. Hierdoor ontstaat een representatieve spreiding die het mogelijk maakt om verschillen in aanpak en maturiteit duidelijk in kaart te brengen.
+Daarnaast weerspiegelt deze selectie verschillende maturiteitsniveaus en implementatiebenaderingen die ook binnen de strategische PAM-roadmap van Ahold Delhaize naar voren kwamen, variërend van uitgebreide enterprise-platformen tot meer toegankelijke oplossingen met focus op eenvoud en snelle implementatie.
+Tot slot werd ook de praktische uitvoerbaarheid in acht genomen. Twee oplossingen, namelijk ManageEngine PAM360 en Securden, werden effectief geïmplementeerd binnen de proof of concept.
+
+\section{Vergelijkingscriteria}
+Om een gestructureerde en objectieve vergelijking te kunnen uitvoeren, werd een set van evaluatiecriteria opgesteld. Deze criteria vormen de basis waarop de geselecteerde PAM oplossingen worden geanalyseerd en vergeleken.
+De gekozencriteria zijn;
+\begin{itemize}
+	\item Just-in-Time (JIT) access
+	\item Sessielogging en recording
+	\item Credential vaulting
+	\item Toegangscontrole
+	\item Gebruiksgemak en implementatiecomplexiteit 
+\end{itemize}
+Deze criteria zijn niet willekeurig gekozen, maar vloeien voort uit meerdere elementen binnen deze bachelorproef.
+Ten eerste sluiten ze aan bij de belangrijkste risico’s die geïdentificeerd werden in de literatuurstudie rond privileged access, zoals het misbruik van permanente rechten, onvoldoende zichtbaarheid op gebruikersactiviteiten en onveilige opslag van credentials.
+Daarnaast zijn de criteria afgestemd op de uitgewerkte casestudies binnen Ahold Delhaize, waarin governance, auditing, Just-in-Time toegang, credential vaulting en gecontroleerde onboarding van privileged accounts als prioritaire capabilities werden beschouwd. Hierdoor wordt verzekerd dat de vergelijking niet louter theoretisch is, maar ook aansluit bij reële enterprise-uitdagingen en operationele vereisten. Verder weerspiegelen de gekozen criteria de kernfunctionaliteiten die algemeen erkend worden binnen PAM oplossingen, zoals ook naar voren komt in marktanalyses en vendor documentatie (\cite{ForresterWavePIM2025} \cite{KuppingerColePAM2024}, \cite{GartnerMagicQuadrantPAM2025}).
+
+Tot slot werd bewust een combinatie gemaakt van technische en praktische criteria. Naast beveiligingsfunctionaliteiten wordt ook rekening gehouden met gebruiksgemak en implementatiecomplexiteit, aangezien deze een belangrijke impact hebben op de haalbaarheid en effectiviteit van een implementatie in een reële bedrijfsomgeving. De casestudies tonen namelijk aan dat de effectiviteit van een PAM-oplossing niet uitsluitend bepaald wordt door technische functionaliteiten, maar eveneens door adoptie, operationele efficiëntie, schaalbaarheid en implementatiecomplexiteit binnen internationale IT-omgevingen.
+
+De verdere uitwerking van deze studie gebeurt in de volgende secties. Eerst wordt de werking en architectuur van de geselecteerde PAM oplossingen toegelicht, waarna de verschillende criteria afzonderlijk worden geanalyseerd en systematisch vergeleken.
+\section{Architectuur en werking }
+\subsection{CyberArk – Architectuur en werking}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{CyberarkWerking.png}
+	\caption[Cyberark Werking (\cite{cyberark_psm}).]{\label{fig:CyberarkWerking}Cyberark Werking (\cite{cyberark_psm}).}
+\end{figure}
+CyberArk Privileged Access Management is opgebouwd volgens een gelaagde architectuur waarbij toegang tot kritieke systemen centraal wordt beheerd en gecontroleerd. De belangrijkste componenten binnen deze architectuur zijn de Password Vault, de Privileged Session Manager (PSM) en de Password Vault Web Access (PVWA) (\cite{cyberark_pam_architecture}). 
+
+Deze componenten werken samen om privileged access te beveiligen door directe verbindingen tussen gebruikers en doelsystemen te vermijden en alle toegang via een gecontroleerde tussenlaag te laten verlopen.
+
+\subsubsection{Belangrijkste componenten}
+\paragraph{Password Vault}
+De Password Vault vormt de kern van het CyberArk-platform en is verantwoordelijk voor het veilig opslaan van credentials zoals wachtwoorden en SSH-sleutels. Binnen deze component worden alle credentials versleuteld opgeslagen en centraal beheerd, waardoor ongecontroleerde verspreiding wordt voorkomen. Daarnaast ondersteunt de vault automatische rotatie van wachtwoorden op basis van ingestelde policies, wat het risico op misbruik aanzienlijk verkleint. Toegang tot deze credentials wordt strikt gecontroleerd en gebruikers krijgen nooit rechtstreeks inzage in de gevoelige gegevens, aangezien deze enkel gebruikt worden binnen gecontroleerde sessies (\cite{cyberark_rotation}).
+\paragraph{Password Vault Web Access}
+De Password Vault Web Access (PVWA) fungeert als de webinterface van CyberArk en vormt de centrale toegangspoort tot het platform. Via deze interface kunnen gebruikers toegang aanvragen tot systemen en sessies opstarten, afhankelijk van hun rechten en de ingestelde policies. Daarnaast biedt de PVWA functionaliteiten voor het beheren van accounts en het uitvoeren van administratieve taken. De interface ondersteunt ook goedkeuringsprocessen, waardoor toegang indien nodig eerst gevalideerd kan worden voordat deze wordt toegekend (\cite{cyberark_pam_architecture}).
+\paragraph{Privileged Session Manager }
+De Privileged Session Manager (PSM) is een essentiële component binnen de CyberArk-architectuur en fungeert als een beveiligde proxy tussen de gebruiker en het doelsysteem. In plaats van een directe verbinding wordt alle communicatie via de PSM geleid, waardoor volledige controle over de sessie mogelijk is. De PSM is verantwoordelijk voor het opzetten van sessies via protocollen zoals SSH en RDP en zorgt ervoor dat credentials automatisch uit de vault worden opgehaald en geïnjecteerd zonder dat de gebruiker deze te zien krijgt. Tijdens de sessie worden alle activiteiten gemonitord en kan de volledige sessie worden opgenomen. Door deze aanpak wordt directe toegang tot systemen geblokkeerd en wordt een hoog beveiligingsniveau gegarandeerd (\cite{cyberark_psm}).
+\paragraph{Integraties}
+CyberArk integreert met verschillende externe systemen om authenticatie, monitoring en beheer te centraliseren. Zo wordt vaak gebruikgemaakt van Active Directory voor gebruikersauthenticatie en identiteitsbeheer. Daarnaast kunnen logs en sessiegegevens worden doorgestuurd naar SIEM-systemen, wat uitgebreide monitoring en auditing mogelijk maakt. CyberArk ondersteunt eveneens integraties met cloudplatformen zoals Microsoft Azure en Amazon Web Services, waardoor ook hybride en cloudomgevingen veilig beheerd kunnen worden (\cite{cyberark_pam_architecture}).
+\subsubsection{Werking}
+De werking van een privileged sessie binnen CyberArk kan worden gezien als een gecontroleerd proces waarbij de gebruiker nooit rechtstreeks verbinding maakt met het doelsysteem (\cite{cyberark_psm}).
+
+Wanneer een gebruiker toegang nodig heeft tot een systeem, meldt deze zich eerst aan via de Password Vault Web Access (PVWA). Vanuit deze webinterface kan de gebruiker een toegangsaanvraag indienen voor een specifieke resource, zoals een server of netwerkapparaat. Vervolgens wordt de identiteit van de gebruiker gevalideerd, bijvoorbeeld via integratie met Active Directory. Tegelijkertijd controleert CyberArk of de gebruiker over de juiste rechten beschikt en of aan alle beleidsvoorwaarden is voldaan (\cite{cyberark_pam_architecture}).
+
+Na een succesvolle validatie wordt de gebruiker niet rechtstreeks verbonden met het doelsysteem, maar automatisch doorgestuurd naar de Privileged Session Manager (PSM). Deze component fungeert als een beveiligde tussenlaag die alle communicatie tussen de gebruiker en het systeem afhandelt. De PSM haalt op zijn beurt de benodigde credentials op uit de Password Vault. Deze credentials blijven volledig verborgen voor de gebruiker en worden enkel gebruikt om de sessie op te zetten (\cite{cyberark_psm}).
+
+Vervolgens initieert de PSM de verbinding met het doelsysteem via het gewenste protocol, zoals SSH of RDP, en wordt de sessie gestart. Tijdens deze sessie worden alle activiteiten van de gebruiker continu gemonitord. CyberArk logt alle acties en kan de volledige sessie opnemen voor audit- en forensische doeleinden. Daarnaast kunnen deze logs worden doorgestuurd naar externe systemen, zoals SIEM-oplossingen, voor verdere analyse en correlatie (\cite{cyberark_psm,cyberark_pam_architecture}).
+
+Door deze aanpak wordt directe toegang tot kritieke systemen vermeden en blijft volledige controle behouden over alle privileged sessies, wat bijdraagt aan een verhoogd beveiligingsniveau en betere compliance (\cite{nist2020}). Deze aanpak sluit nauw aan bij de strategische visie van Ahold Delhaize, waarbij centrale governance, auditing, credential vaulting en gecontroleerde toegang als kernvereisten binnen de PAM-roadmap werden opgenomen.
+
+\subsection{Beyond trust architectuur en werking }
+BeyondTrust implementeert Privileged Access Management via een modulaire architectuur die bestaat uit meerdere componenten voor credential management en remote access. De oplossing combineert Password Safe (credential vaulting) met Privileged Remote Access (PRA), waardoor zowel interne als externe toegang tot systemen gecontroleerd kan worden.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{BeyondTrustWerking.png}
+	\caption[Beyond Trust Werking (\cite{beyondtrust_secure_remote_architecture}).]{\label{fig:BeyondTrustWerking}Beyond Trust Werking (\cite{beyondtrust_secure_remote_architecture}).}
+\end{figure}
+Zoals weergegeven in de architectuur wordt toegang tot systemen niet rechtstreeks verleend, maar via een gecontroleerde infrastructuur met jump hosts en gateways.
+\subsubsection{Belangrijkste componenten}
+\paragraph{Remote Access Platform}
+Het Remote Access Platform vormt de centrale component binnen de BeyondTrust-architectuur en wordt doorgaans geïmplementeerd als een fysieke of virtuele appliance. Deze component is verantwoordelijk voor het beheren van alle remote toegang en fungeert als controlepunt tussen gebruikers en interne systemen. Alle verbindingen verlopen via dit platform, waardoor toegang centraal kan worden afgedwongen en gecontroleerd. Daarnaast zorgt het platform voor de toepassing van beveiligingsregels en policies, waardoor een veilige en consistente toegang tot systemen wordt gegarandeerd (\cite{beyondtrust_architecture}).
+\paragraph{Password Safe (Vault)}
+De Password Safe component fungeert als de centrale credential vault binnen BeyondTrust. Hierin worden gevoelige gegevens zoals wachtwoorden en SSH-sleutels veilig opgeslagen en beheerd. De vault zorgt ervoor dat credentials versleuteld worden bewaard en enkel gebruikt worden binnen gecontroleerde sessies. Gebruikers krijgen geen directe toegang tot deze gegevens, aangezien deze automatisch worden toegepast tijdens het opzetten van verbindingen. Daarnaast ondersteunt Password Safe het beheer en de rotatie van wachtwoorden, wat bijdraagt aan een verhoogd beveiligingsniveau (\cite{beyondtrust_passwordsafe}).
+
+\paragraph{Jumpoints}
+Jumpoints fungeren als beveiligde gateways die de verbinding mogelijk maken tussen het Remote Access Platform en interne netwerken. Ze zorgen ervoor dat toegang tot systemen verloopt via een gecontroleerd pad, zonder dat directe netwerktoegang nodig is. Hierdoor wordt de interne infrastructuur afgeschermd en wordt het risico op ongeautoriseerde toegang beperkt. Jumpoints kunnen in verschillende netwerken worden geplaatst, waardoor schaalbare en gesegmenteerde toegang tot systemen mogelijk wordt (\cite{beyondtrust_jumpoint}).
+\paragraph{Jump Clients}
+Jump Clients zijn agents die op systemen geïnstalleerd worden om directe en continue toegang mogelijk te maken, ook wanneer deze systemen zich buiten het traditionele netwerk bevinden. Deze component maakt het mogelijk om systemen te beheren zonder dat een actieve gebruiker aanwezig hoeft te zijn, wat vooral nuttig is voor unattended access scenario’s. Jump Clients ondersteunen verschillende platformen en dragen bij aan de flexibiliteit van de oplossing( \cite{beyondtrust_jumpclient}).
+\paragraph{Authenticatie- en beveiligingslaag}
+BeyondTrust maakt gebruik van een uitgebreide authenticatielaag om toegang tot het platform te beveiligen. Deze laag ondersteunt verschillende authenticatiemechanismen, waaronder integraties met directory services en multi-factor authenticatie. Hierdoor wordt verzekerd dat enkel geautoriseerde gebruikers toegang krijgen tot het platform en de onderliggende systemen. Deze component speelt een belangrijke rol in het afdwingen van beveiligingsbeleid en het beschermen van privileged toegang.
+
+\subsubsection{Werking}
+De werking van een privileged sessie binnen BeyondTrust kan worden beschreven als een gecontroleerd proces waarbij toegang tot systemen centraal wordt beheerd en beveiligd (\cite{beyondtrust_architecture}).
+
+Wanneer een gebruiker – intern of extern – toegang nodig heeft, meldt deze zich eerst aan via het BeyondTrust-platform. De authenticatie gebeurt doorgaans via systemen zoals Active Directory of LDAP, en kan worden aangevuld met multi-factor authenticatie (MFA) om de veiligheid te verhogen (\cite{beyondtrust_authentication}).
+
+Na het aanmelden selecteert de gebruiker het systeem waartoe toegang nodig is. Op dat moment bepaalt BeyondTrust of toegang wordt toegestaan op basis van verschillende factoren, zoals ingestelde policies, gebruikersrollen (RBAC) en contextuele elementen zoals tijdstip of locatie (\cite{beyondtrust_architecture}).
+
+Indien de toegang wordt goedgekeurd, wordt de sessie niet rechtstreeks opgezet met het doelsysteem. In plaats daarvan verloopt de verbinding via de zogenaamde Jump-infrastructuur. Dit kan via een Jump Client (agent-based) of een Jumpoint (gateway-based). Hierdoor wordt directe toegang tot het systeem vermeden en blijft de verbinding volledig gecontroleerd (\cite{beyondtrust_jumpclient,beyondtrust_jumpoint}).
+
+Vervolgens worden de benodigde credentials automatisch opgehaald uit de Password Safe en geïnjecteerd in de sessie. De gebruiker krijgt deze credentials nooit te zien, wat het risico op misbruik aanzienlijk verkleint (\cite{beyondtrust_passwordsafe}).
+
+Na het opzetten van de sessie krijgt de gebruiker toegang tot het doelsysteem, zoals Windows servers via RDP, Linux systemen via SSH, netwerkapparatuur of andere omgevingen zoals databases en cloudplatformen. BeyondTrust ondersteunt hierbij verschillende protocollen en toegangsvormen (\cite{beyondtrust_architecture}).
+
+Tijdens de sessie worden alle activiteiten continu gemonitord. Acties worden gelogd, sessies kunnen worden opgenomen en real-time monitoring is mogelijk. Deze gegevens kunnen bovendien geïntegreerd worden met SIEM-systemen voor verdere analyse en auditing (\cite{beyondtrust_architecture}).
+Na afloop van de sessie wordt de verbinding automatisch beëindigd, wordt de toegang ingetrokken en blijven de credentials beschermd binnen de vault (\cite{beyondtrust_passwordsafe}).
+
+In tegenstelling tot CyberArk, dat werkt met een centrale proxycomponent (PSM), maakt BeyondTrust gebruik van een combinatie van Jump Clients en Jumpoints. Deze aanpak biedt meer flexibiliteit in netwerkarchitectuur en is bijzonder geschikt voor scenario’s met externe gebruikers of remote access.
+
+\subsection{ManageEngine PAM360 – Architectuur en werking }
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{PAM360Werking.jpg}
+	\caption[PAM360 Werking (\cite{pam360_architecture}).]{\label{fig:PAM360Werking}PAM360 Werking (\cite{pam360_architecture}).}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{PAM360Werking2.jpg}
+	\caption[PAM360 Werking2 (\cite{pam360_scaling}).]{\label{fig:PAM360Werking2}PAM360 Werking2 (\cite{pam360_scaling}).}
+\end{figure}
+
+ManageEngine PAM360 is opgebouwd rond een centrale serverarchitectuur waarbij alle functionaliteiten voor credential management, toegangscontrole en sessiebeheer geïntegreerd zijn binnen één platform (\cite{pam360_architecture}). In tegenstelling tot meer modulaire oplossingen zoals BeyondTrust, wordt PAM360 typisch geïmplementeerd als een gecentraliseerde applicatie met optionele high availability via een secondary server (\cite{pam360_architecture,pam360_high_availability}).
+
+Zoals weergegeven in de architectuurdiagram, fungeert de PAM360-server als centrale hub die verbinding maakt met verschillende systemen zoals Windows servers, Linux systemen, databases en netwerkapparatuur (\cite{pam360_architecture}).
+
+\subsubsection{Belangrijkste componenten}
+\paragraph{PAM360 Server}
+De PAM360 Server vormt de centrale component van de oplossing en combineert verschillende functionaliteiten binnen één platform. Deze server beheert zowel de credential vault als de toegangscontrole en sessiebeheer. Alle interacties met systemen verlopen via deze centrale component, waardoor een gecentraliseerde en overzichtelijke aanpak ontstaat (\cite{pam360_architecture}). Door deze architectuur is PAM360 relatief eenvoudig te implementeren en te beheren.
+\paragraph{Credential Vault}
+De credential vault binnen PAM360 is geïntegreerd in de centrale server en zorgt voor de veilige opslag van wachtwoorden en SSH-sleutels. Credentials worden versleuteld opgeslagen en centraal beheerd, waardoor ongecontroleerde verspreiding wordt vermeden. Daarnaast ondersteunt de oplossing automatische rotatie van wachtwoorden en het gecontroleerd gebruik van credentials binnen sessies, zonder dat deze zichtbaar zijn voor de gebruiker (\cite{pam360_architecture}).
+\paragraph{Jump Server functionaliteit}
+PAM360 maakt gebruik van een jump server-achtige functionaliteit om toegang tot systemen te beheren. In plaats van directe verbindingen worden sessies opgezet via de PAM360 omgeving, waardoor volledige controle behouden blijft. Deze aanpak zorgt ervoor dat toegang tot systemen wordt afgeschermd en dat alle activiteiten centraal kunnen worden gemonitord en gelogd (\cite{pam360_architecture}).
+\paragraph{Integraties}
+PAM360 integreert met verschillende externe systemen om identiteitsbeheer en toegang te centraliseren. Zo kan de oplossing gekoppeld worden aan Active Directory of LDAP voor authenticatie en gebruikersbeheer. Daarnaast ondersteunt PAM360 integraties met databases, cloudplatformen en API’s, waardoor de oplossing breed inzetbaar is binnen verschillende IT-omgevingen (\cite{pam360_architecture}).
+\subsubsection{Werking}
+De werking van een privileged sessie binnen ManageEngine PAM360 kan worden beschreven als een gecontroleerd proces waarbij toegang tot systemen centraal wordt beheerd en beveiligd (\cite{pam360_architecture}).
+
+Wanneer een gebruiker toegang nodig heeft, meldt deze zich eerst aan via de webinterface van PAM360. De authenticatie gebeurt doorgaans via integratie met Active Directory of LDAP en kan indien nodig worden uitgebreid met multi-factor authenticatie (MFA) om de beveiliging te verhogen (\cite{pam360_architecture}).
+
+Na het aanmelden selecteert de gebruiker het systeem waartoe toegang nodig is en dient een toegangsaanvraag in. Op dat moment wordt bepaald of toegang wordt toegestaan op basis van ingestelde policies, gebruikersrollen (RBAC) en eventueel vooraf gedefinieerde regels. Afhankelijk van de configuratie kan deze aanvraag automatisch worden goedgekeurd of eerst manueel gevalideerd worden door een beheerder. Dit goedkeuringsmechanisme vormt een belangrijk onderdeel van de Just-in-Time implementatie binnen PAM360 (\cite{pam360_architecture,nist2020}).
+
+Wanneer toegang wordt toegestaan, haalt PAM360 de benodigde credentials, zoals wachtwoorden of SSH-sleutels, op uit de centrale vault. Deze credentials worden niet zichtbaar gemaakt voor de gebruiker, maar automatisch gebruikt om de sessie op te zetten (\cite{pam360_architecture}).
+
+De sessie zelf wordt vervolgens gestart via de PAM360 omgeving, waarbij gebruik wordt gemaakt van een jump server-achtige aanpak. Dit betekent dat de gebruiker geen directe verbinding maakt met het doelsysteem. Afhankelijk van het type systeem kan de toegang verlopen via SSH naar Linux-systemen, RDP naar Windows-servers of via databaseprotocollen zoals JDBC/SQL (\cite{pam360_architecture}).
+
+Tijdens de sessie worden alle activiteiten continu gemonitord. PAM360 registreert acties, kan sessies opnemen en bewaart audit logs voor compliance en analyse achteraf (\cite{pam360_architecture}).
+
+Na afloop van de sessie wordt de verbinding automatisch beëindigd en vervalt de toegekende toegang. De gebruikte credentials blijven veilig opgeslagen in de vault, waardoor permanente toegang en blootstelling van gevoelige gegevens worden vermeden (\cite{pam360_architecture,nist2020}).
+
+\subsection{Securden Architectuur en werking}
+Securden implementeert Privileged Access Management via een gecentraliseerde serverarchitectuur waarbij alle toegang tot systemen wordt gecontroleerd via één of meerdere Securden servers. De oplossing maakt gebruik van aanvullende componenten zoals een Session Manager (SSM) en een API Server, en ondersteunt verschillende netwerkarchitecturen, waaronder interne toegang en remote access via het internet.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenWerking.png}
+	\caption[Securden Werking (\cite{securden_pam}).]{\label{fig:SecurdenWerking.png}Securden Werking (\cite{securden_pam}).}
+\end{figure}
+Zoals zichtbaar in de architectuurdiagrammen onderscheidt Securden zich door het gebruik van een tunnel-gebaseerde aanpak, waarbij verbindingen veilig worden opgezet zonder directe inbound connecties naar i nterne systemen.
+
+\subsubsection{Belangrijkste componenten}
+\paragraph{Securden Server}
+De Securden Server vormt de centrale component van de oplossing en fungeert als controlepunt voor alle privileged toegang. Deze server beheert credentials, toegangsrechten en sessies binnen één geïntegreerd platform. Door deze gecentraliseerde aanpak kan toegang tot systemen efficiënt en gecontroleerd worden beheerd (\cite{securden_pam}).
+
+\paragraph{Credential Vault}
+Binnen Securden worden credentials opgeslagen in een centrale vault die instaat voor de veilige opslag en het beheer van gevoelige gegevens. Wachtwoorden en sleutels worden versleuteld opgeslagen en enkel gebruikt binnen gecontroleerde sessies. Gebruikers krijgen geen directe toegang tot deze gegevens, wat het risico op misbruik beperkt (\cite{securden_pam}).
+
+\paragraph{Session Manager (SSM)}
+De Session Manager is verantwoordelijk voor het opzetten en beheren van alle sessies binnen de Securden-omgeving. Deze component fungeert als een proxy tussen de gebruiker en het doelsysteem, waardoor directe verbindingen worden vermeden. Tijdens de sessie worden alle activiteiten gemonitord en gelogd, wat zorgt voor volledige zichtbaarheid en controle (\cite{securden_remote_gateway,securden_session_monitoring}).
+
+\paragraph{API Server en Tunnel Server}
+Securden maakt gebruik van aanvullende componenten zoals de API Server en de Tunnel Server om externe toegang mogelijk te maken. De API Server ondersteunt automatisatie en backend operaties, terwijl de Tunnel Server veilige verbindingen opzet tussen externe gebruikers en interne systemen. Deze tunnel-gebaseerde aanpak maakt het mogelijk om toegang te verlenen zonder inbound netwerkpoorten open te stellen, wat de beveiliging verhoogt (\cite{securden_server_connectivity,securden_remote_gateway,securden_sdk_api}).
+
+\subsubsection{Werking}
+De werking van een privileged sessie binnen Securden kan worden beschreven als een gecontroleerd proces waarbij toegang tot systemen centraal wordt beheerd en beveiligd. Afhankelijk van de netwerkcontext en het type toegang kan deze werking licht variëren. Op basis van de architectuur kunnen drie typische scenario’s worden onderscheiden (\cite{securden_pam}).
+
+In een eerste scenario, waarbij zowel de gebruiker als de doelsystemen zich binnen hetzelfde interne netwerk bevinden, meldt de gebruiker zich aan via de webinterface van Securden, doorgaans via een beveiligde HTTPS-verbinding. De authenticatie gebeurt via integratie met directory services zoals Active Directory of LDAP. Na succesvolle authenticatie selecteert de gebruiker het gewenste systeem. De Session Manager (SSM) zet vervolgens de sessie op via protocollen zoals SSH of RDP, waarbij de benodigde credentials automatisch uit de vault worden opgehaald en geïnjecteerd zonder dat deze zichtbaar zijn voor de gebruiker. Tijdens de sessie worden alle activiteiten gemonitord en gelogd. In dit scenario is er geen directe verbinding tussen de gebruiker en het doelsysteem, aangezien alle communicatie via de Securden infrastructuur verloopt (\cite{securden_pam,securden_session_monitoring}).
+
+In een tweede scenario, waarbij beheer op afstand via het internet wordt uitgevoerd, maakt de gebruiker verbinding met de Securden server via een beveiligde HTTPS-verbinding. De communicatie verloopt via de centrale server, waarbij de API Server instaat voor backend operaties zoals authenticatie en beheerlogica. De Session Manager beheert vervolgens de sessie naar de interne systemen. Dankzij deze aanpak blijft de interne infrastructuur volledig afgeschermd van directe externe toegang, terwijl beheertaken toch veilig kunnen worden uitgevoerd (\cite{securden_server_connectivity,securden_sdk_api}).
+
+Het derde scenario betreft remote access via een reverse tunnel, wat vooral relevant is voor externe toegang tot systemen. In dit geval zetten interne systemen zelf een outbound verbinding op naar de Securden server, waardoor een beveiligde tunnel ontstaat. Wanneer een gebruiker via het internet verbinding maakt, wordt het verkeer via deze tunnel naar het interne netwerk geleid. De Session Manager zet vervolgens de sessie op naar het doelsysteem via protocollen zoals SSH, RDP of SQL. Doordat er geen inbound firewallpoorten geopend moeten worden, verhoogt deze aanpak de beveiliging aanzienlijk en sluit ze goed aan bij moderne Zero Trust-principes (\cite{securden_remote_gateway,nist2020}).
+
+Securden ondersteunt toegang tot een brede waaier aan systemen en protocollen. Dit omvat onder andere Linux-systemen via SSH, Windows-systemen via RDP, databases via SQL-protocollen, webapplicaties via HTTPS en diverse netwerkapparatuur. Hierdoor kan de oplossing worden ingezet binnen uiteenlopende IT-omgevingen en use cases (\cite{securden_pam}).
+
+
+\section{Vergelijking van de criteria}
+\subsection{Just-in-Time access}
+\paragraph{Inleiding}
+Just-in-Time access is een essentieel principe binnen moderne Privileged Access Management-oplossingen. Het doel van JIT is om permanente privileged rechten te vermijden door toegang enkel tijdelijk toe te kennen op het moment dat deze nodig is. Hierdoor wordt het risico op misbruik van privileged accounts aanzienlijk verminderd (\cite{nist2020}).
+
+JIT sluit nauw aan bij Zero Trust-principes, in het bijzonder Zero Standing Privileges, waarbij gebruikers standaard geen permanente verhoogde rechten hebben. Toegang wordt dynamisch toegekend, gecontroleerd en automatisch ingetrokken na gebruik (\cite{nist2020}).
+
+Het belang van Just-in-Time toegang wordt eveneens bevestigd binnen de strategische PAM-roadmap van Ahold Delhaize, waar tijdelijke privilege-elevatie en Zero Standing Privileges als belangrijke doelstellingen werden opgenomen.
+
+In deze analyse wordt onderzocht hoe CyberArk, BeyondTrust, ManageEngine  PAM360 en Securden JIT implementeren en in welke mate deze oplossingen bijdragen aan beveiliging en controle.
+
+\paragraph{Cyberark}
+CyberArk implementeert Just-in-Time toegang via een sterk geautomatiseerd en policy-based model, ondersteund door verschillende componenten zoals de Vault, Privileged Session Manager (PSM), Password Vault Web Access (PVWA) en Central Policy Manager (CPM) (\cite{cyberark_pam_architecture,cyberark_psm}).
+
+Wanneer een gebruiker toegang aanvraagt, worden policies geëvalueerd op basis van rol, tijd en eventuele goedkeuring. Indien toegang wordt toegestaan, worden credentials tijdelijk beschikbaar gesteld via credential injection of via tijdelijke (ephemeral) accounts. De sessie wordt vervolgens opgezet via de PSM, waardoor directe toegang tot het doelsysteem wordt vermeden (\cite{cyberark_psm,cyberark_pam_architecture}).
+
+Tijdens de sessie worden alle activiteiten gemonitord en gelogd. Na afloop wordt de toegang automatisch ingetrokken en kunnen credentials geroteerd worden. CyberArk ondersteunt hiermee volledig het principe van Zero Standing Privileges (\cite{cyberark_psm,nist2020}).
+CyberArk biedt een zeer mature en geautomatiseerde implementatie van JIT, geschikt voor complexe enterprise-omgevingen.
+\paragraph{BeyondTrust}
+BeyondTrust implementeert JIT via een combinatie van Password Safe en Privileged Remote Access (PRA), waarbij sterk wordt ingezet op context-aware toegangscontrole (\cite{beyondtrust_passwordsafe,beyondtrust_architecture}).
+
+Toegang wordt niet enkel bepaald op basis van identiteit, maar ook op basis van contextuele factoren zoals tijdstip, locatie en risicoprofiel. Na evaluatie van deze parameters worden privileges tijdelijk toegekend (\cite{beyondtrust_authentication}).
+
+Sessies worden opgezet via de BeyondTrust infrastructuur, zonder directe verbinding met het doelsysteem. Credentials blijven beschermd in de vault en worden niet zichtbaar gemaakt voor de gebruiker. Tijdens de sessie wordt volledige logging en monitoring voorzien (\cite{beyondtrust_passwordsafe,beyondtrust_architecture}).
+
+In vergelijking met CyberArk biedt BeyondTrust een flexibelere en meer contextbewuste benadering van JIT, wat vooral voordelig is in omgevingen met externe gebruikers of remote access.
+
+\paragraph{ManageEngine PAM360}
+ManageEngine PAM360 implementeert Just-in-Time toegang via een workflow- en policy-gebaseerd model.
+
+Gebruikers vragen toegang aan tot een systeem via de webinterface, waarbij de aanvraag vaak onderworpen wordt aan een goedkeuringsproces. Na goedkeuring wordt toegang toegekend voor een beperkte tijdsduur.
+
+Credentials worden opgehaald uit de centrale vault en automatisch gebruikt tijdens de sessie, zonder dat deze zichtbaar zijn voor de gebruiker. De sessie verloopt via de PAM360 omgeving en wordt gelogd en eventueel opgenomen.
+
+Na afloop van de sessie of het tijdsvenster wordt de toegang automatisch ingetrokken. In tegenstelling tot CyberArk en BeyondTrust is de implementatie minder geautomatiseerd en sterk afhankelijk van workflows en manuele goedkeuring.
+
+PAM360 biedt hiermee een basisimplementatie van JIT die geschikt is voor organisaties met minder complexe vereisten.
+
+\paragraph{Securden}
+Securden implementeert JIT via een eenvoudig request-release model, met een sterke focus op gebruiksgemak en snelle implementatie (\cite{securden_pam}).
+
+Gebruikers vragen toegang aan tot een resource, waarna deze afhankelijk van de configuratie automatisch of via goedkeuring wordt toegekend. Toegang is steeds tijdsgebonden en vervalt automatisch na afloop (\cite{securden_pam,nist2020}).
+
+Credentials worden opgehaald uit de vault en gebruikt zonder dat ze zichtbaar zijn voor de gebruiker. Sessies verlopen via de Securden infrastructuur en worden gelogd en gemonitord (\cite{securden_session_monitoring,securden_pam}).
+
+In vergelijking met de andere oplossingen biedt Securden een minder geavanceerde maar zeer toegankelijke implementatie van JIT, gericht op eenvoud en praktische inzetbaarheid.
+
+\paragraph{Vergelijkende analyse}
+Alle onderzochte oplossingen ondersteunen Just-in-Time toegang als mechanisme om permanente privileges te vermijden (\cite{nist2020}). De manier waarop dit wordt geïmplementeerd verschilt echter aanzienlijk.
+
+CyberArk biedt de meest uitgebreide en mature implementatie van JIT. De oplossing maakt gebruik van een sterk geautomatiseerde en policy-based aanpak waarbij toegang dynamisch wordt toegekend op basis van identiteit, rol, tijd en goedkeuringsflows. Dankzij de nauwe integratie tussen de Vault, PSM en CPM ondersteunt CyberArk geavanceerde functionaliteiten zoals credential injection, automatische credential rotatie en Zero Standing Privileges. Hierdoor is de oplossing bijzonder geschikt voor complexe enterprise-omgevingen met hoge beveiligingsvereisten (\cite{cyberark_psm,cyberark_pam_architecture}).
+
+BeyondTrust implementeert JIT op een meer context-aware manier. Naast identity-based toegangscontrole houdt de oplossing rekening met contextuele factoren zoals locatie, tijdstip en risicoprofiel. De combinatie van Password Safe, Privileged Remote Access (PRA), Jump Clients en Jumpoints zorgt voor een flexibele architectuur die bijzonder geschikt is voor externe gebruikers en remote access scenario’s. Hierdoor biedt BeyondTrust een zeer flexibele en gebruiksvriendelijke implementatie van tijdelijke privilege-elevatie (\cite{beyondtrust_passwordsafe,beyondtrust_authentication,beyondtrust_jumpclient,beyondtrust_jumpoint}).
+
+ManageEngine PAM360 volgt een meer traditionele workflow-gebaseerde benadering van JIT. Toegang wordt doorgaans verleend via aanvraag- en goedkeuringsprocessen waarbij policies en RBAC bepalen of toegang wordt toegestaan. Hoewel PAM360 minder geavanceerde automatisatie biedt dan CyberArk of BeyondTrust, combineert het credential vaulting, sessiebeheer en toegangscontrole binnen één geïntegreerd platform. Hierdoor blijft de oplossing relatief eenvoudig te implementeren en te beheren (\cite{pam360_architecture}).
+
+Ook Securden implementeert JIT via een request-release model waarbij toegang tijdelijk wordt toegekend en automatisch vervalt na afloop van de sessie. De oplossing focust sterk op eenvoud, snelle implementatie en gebruiksgemak. In vergelijking met de andere oplossingen biedt Securden minder geavanceerde automatisatie en context-aware functionaliteiten, maar de oplossing blijft bijzonder toegankelijk voor kleinere of minder complexe IT-omgevingen (\cite{securden_pam,securden_session_monitoring}).
+
+Naast functionaliteit speelt ook complexiteit een belangrijke rol. CyberArk biedt de meest uitgebreide mogelijkheden, maar vereist doorgaans ook de meest complexe implementatie en configuratie. BeyondTrust positioneert zich tussen flexibiliteit en gebruiksgemak, terwijl PAM360 en Securden vooral focussen op eenvoud, centrale beheersbaarheid en snelle inzetbaarheid.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{VergelijkingJIT.png}
+	\caption[Vergelijkingstabel JIT.]{\label{fig:VergelijkingJIT.png}Vergelijkingstabel JIT.}
+\end{figure}
+
+\subsection{Sessielogging en sessie recording}
+
+\paragraph{inleiding}
+Sessielogging en -recording zijn een essentieel onderdeel van Privileged Access Management. Omdat privileged accounts toegang geven tot kritieke systemen, is het noodzakelijk om alle activiteiten nauwkeurig te registreren en indien nodig op te nemen. Dit maakt het mogelijk om acties achteraf te reconstrueren, incidenten te analyseren en te voldoen aan compliancevereisten zoals NIS2 (\cite{nist2020}).
+
+Uit de casestudies blijkt eveneens dat uitgebreide auditing en monitoring essentieel zijn binnen enterprise-omgevingen om compliance en traceerbaarheid van privileged activiteiten te garanderen.
+
+In deze analyse wordt onderzocht hoe CyberArk, BeyondTrust, ManageEngine PAM360 en Securden deze functionaliteiten implementeren en in welke mate ze bijdragen aan beveiliging en auditability.
+
+\paragraph{CyberArk}
+CyberArk biedt een zeer uitgebreide en mature oplossing via de Privileged Session Manager (PSM), waarbij alle sessies via een proxy verlopen. Hierdoor worden sessies volledig opgenomen (video), worden commando’s en toetsaanslagen gedetailleerd gelogd en is real-time monitoring met interventiemogelijkheden mogelijk (\cite{cyberark_psm}).
+
+De opslag van recordings gebeurt beveiligd en los van het endpoint, wat manipulatie voorkomt. Daarnaast beschikt CyberArk over sterke zoekfunctionaliteiten en uitgebreide audit trails, wat het bijzonder geschikt maakt voor forensisch onderzoek en streng gereguleerde omgevingen (\cite{cyberark_psm,nist2020}).
+
+\paragraph{BeyondTrust}
+BeyondTrust implementeert sessielogging via de Privileged Remote Access (PRA) component, waarbij sessies verlopen via jumpoints. Net zoals CyberArk ondersteunt het platform video recording, gedetailleerde logging en real-time monitoring met de mogelijkheid om sessies live te stoppen of over te nemen (\cite{beyondtrust_architecture,beyondtrust_jumpoint}).
+
+De oplossing blinkt uit in flexibiliteit en gebruiksgemak, vooral in scenario’s met externe gebruikers. Integratie met SIEM-systemen en uitgebreide audit logging maken BeyondTrust een sterke keuze voor organisaties die veel inzetten op remote access (\cite{beyondtrust_architecture}).
+
+\paragraph{ManageEngine PAM360}
+PAM360 biedt basisfunctionaliteiten voor sessielogging en recording. Sessies kunnen worden opgenomen en activiteiten worden gelogd, met ondersteuning voor audit trails en rapportage (\cite{pam360_architecture}).
+
+De oplossing mist echter geavanceerde mogelijkheden zoals uitgebreide real-time monitoring, live interventie en diepgaande forensische analyse. Hierdoor ligt de focus eerder op basiscompliance en gebruiksgemak dan op uitgebreide security-analyse.
+
+\paragraph{Securden}
+Securden implementeert sessielogging via de Session Manager (SSM), waarbij sessies via een proxy verlopen. Het platform ondersteunt video recording, logging van commando’s en audit trails (\cite{securden_session_monitoring,securden_remote_gateway}).
+
+Hoewel de functionaliteit vergelijkbaar is met PAM360, ligt de nadruk iets meer op veilige toegang via tunneling. De analysemogelijkheden en real-time interventies blijven echter beperkt in vergelijking met de marktleiders.
+\paragraph{Vergelijkende anaylse}
+Alle oplossingen ondersteunen sessielogging en recording, maar de diepgang en mogelijkheden verschillen aanzienlijk.
+
+CyberArk en BeyondTrust bieden de meest uitgebreide functionaliteiten, met volledige sessie-opnames, real-time monitoring, live interventie en sterke forensische analysemogelijkheden. Beide oplossingen maken gebruik van een proxy-architectuur, wat zorgt voor een hoog beveiligingsniveau en volledige controle over sessies (\cite{cyberark_psm,beyondtrust_architecture}).
+
+PAM360 en Securden bieden dezelfde kernfunctionaliteiten, zoals logging, recording en audit trails, maar in een beperktere vorm. Real-time interventie ontbreekt en analysemogelijkheden zijn minder uitgebreid, waardoor deze oplossingen vooral gericht zijn op basisgebruik en kleinere omgevingen (\cite{pam360_architecture,securden_session_monitoring}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{VergelijkingLogging.png}
+	\caption[Vergelijkingstabel sessielogging en sessie recording]{\label{fig:VergelijkingLogging.png}Vergelijkingstabel sessielogging en sessie recording}
+\end{figure}
+
+\subsection{Credential vaulting}
+\paragraph{Inleiding}
+Credential vaulting vormt één van de kernfunctionaliteiten binnen Privileged Access Management. Privileged credentials, zoals administrator-wachtwoorden en SSH-keys, zijn een belangrijk doelwit voor aanvallers. Het centraal en veilig opslaan, beheren en controleren van deze gegevens is daarom essentieel om misbruik en ongeautoriseerde toegang te voorkomen (\cite{mitre_t1003,nist2020})}.
+
+Moderne PAM-oplossingen voorzien in een centrale vault waarin credentials versleuteld worden opgeslagen. Daarnaast ondersteunen ze functionaliteiten zoals automatische password rotation, tijdelijke toegang en credential injection zonder dat gebruikers de credentials zelf zien. Dit sluit nauw aan bij principes zoals least privilege en Zero Trust (\cite{nist2020})}.
+
+Binnen de casestudies van Ahold Delhaize werd credential vaulting beschouwd als een fundamentele capability om hardcoded credentials, ongecontroleerde wachtwoorddeling en manuele password management-processen te vermijden.
+
+In deze analyse wordt bekeken hoe CyberArk, BeyondTrust, ManageEngine PAM360 en Securden credential vaulting implementeren en in welke mate deze bijdragen aan beveiliging en controle.
+
+\paragraph{CyberArk}
+CyberArk biedt een zeer mature oplossing via de Digital Vault, die specifiek ontworpen is voor maximale beveiliging van gevoelige data. De vault is sterk geïsoleerd van andere componenten en biedt een hoog niveau van bescherming tegen manipulatie en ongeautoriseerde toegang (\cite{cyberark_pam_architecture}).
+
+Naast veilige opslag en sterke encryptie ondersteunt CyberArk uitgebreide functionaliteiten zoals automatische password rotation, credential injection via PSM en check-in/check-out mechanismen. Ook het beheer van service accounts en volledige lifecycle management zijn diepgaand uitgewerkt (\cite{cyberark_psm,cyberark_pam_architecture}).
+
+Wat CyberArk onderscheidt, is de zeer flexibele policycontrole en de integratie met DevOps via secrets management. Hierdoor is de oplossing bijzonder geschikt voor complexe enterprise-omgevingen waar hoge eisen gesteld worden aan beveiliging en automatisatie (\cite{cyberark_pam_architecture}).
+
+\paragraph{BeyondTrust}
+BeyondTrust implementeert credential vaulting via Password Safe, dat een centrale en veilige opslag biedt voor privileged credentials. Net zoals CyberArk ondersteunt het platform password rotation, credential injection en check-in/check-out workflows (\cite{beyondtrust_passwordsafe}).
+
+De oplossing biedt daarnaast degelijk lifecycle management en integratie met Active Directory en andere IAM-systemen. Hoewel de vault minder strikt geïsoleerd is dan bij CyberArk, blijft het beveiligingsniveau hoog (\cite{beyondtrust_passwordsafe,beyondtrust_authentication}).
+
+BeyondTrust positioneert zich als een flexibele oplossing met een goede balans tussen beveiliging en gebruiksgemak, en is geschikt voor organisaties die sterke functionaliteit wensen zonder de complexiteit van een volledig enterprise-platform.
+
+\paragraph{ManageEngine PAM360}
+PAM360 beschikt over een geïntegreerde credential vault binnen de centrale server. De oplossing biedt alle basisfunctionaliteiten zoals veilige opslag, password rotation, credential injection en check-in/check-out mechanismen (\cite{pam360_architecture}).
+
+Daarnaast is er ondersteuning voor API-integraties en beperkte lifecycle management mogelijkheden. De policycontrole en flexibiliteit zijn echter minder uitgebreid dan bij CyberArk en BeyondTrust. Ook secrets management en geavanceerde discovery-functionaliteiten zijn beperkter (\cite{pam360_architecture}).
+
+PAM360 richt zich hierdoor vooral op organisaties die een gebruiksvriendelijke en snel implementeerbare oplossing zoeken, eerder dan een diepgaand geautomatiseerd platform.
+
+\paragraph{Securden}
+Securden biedt credential vaulting via een geïntegreerde vault met focus op eenvoud en praktische inzetbaarheid. De oplossing ondersteunt veilige opslag van wachtwoorden en SSH-keys, automatische password rotation en credential injection via de Session Manager (\cite{securden_pam,securden_session_monitoring}).
+
+Net zoals PAM360 zijn de basisfunctionaliteiten aanwezig, inclusief check-in/check-out en API-integraties. De mogelijkheden op het vlak van policycontrole, lifecycle management en secrets management zijn echter beperkter (\cite{securden_pam,securden_sdk_api}).
+
+Securden is daardoor vooral geschikt voor kleinere omgevingen waar eenvoud en snelle implementatie belangrijker zijn dan uitgebreide enterprise-functionaliteiten.
+\paragraph{Vergelijkende  analyse}
+Alle onderzochte oplossingen bieden een centrale credential vault met de belangrijkste basisfunctionaliteiten, zoals encryptie, password rotation, credential injection en check-in/check-out. Dit vormt de standaard binnen moderne PAM-oplossingen (\cite{nist_zta_800_207}).
+
+De verschillen zitten vooral in de diepgang en flexibiliteit. CyberArk en BeyondTrust bieden sterkere encryptie, meer geavanceerde policycontrole en uitgebreider lifecycle management. CyberArk onderscheidt zich daarnaast met een geïsoleerde en tamper-proof vault en uitgebreide ondersteuning voor secrets management, terwijl BeyondTrust een iets flexibelere en gebruiksvriendelijkere aanpak biedt (\cite{cyberark_pam_architecture,beyondtrust_passwordsafe}).
+
+PAM360 en Securden bieden dezelfde kernfunctionaliteiten, maar met beperktere policycontrole, minder uitgebreide lifecycle management en beperkte ondersteuning voor DevOps en secrets management (\cite{pam360_architecture,securden_pam}). Ook de architectuur speelt een rol: waar CyberArk en BeyondTrust een hoger beveiligingsniveau bieden, zijn PAM360 en Securden eenvoudiger maar minder robuust.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{VergelijkingCred.png}
+	\caption[Vergelijkingstabel Credential Vaulting]{\label{fig:VergelijkingCred.png}Credential Vaulting}
+\end{figure}
+
+\subsection{Toegangscontrole}
+\paragraph{Inleiding}
+Toegangscontrole is een fundamenteel onderdeel van Privileged Access Management en bepaalt welke gebruikers toegang krijgen tot systemen, onder welke voorwaarden en voor welke duur. Binnen moderne security-architecturen evolueert dit sterk richting principes zoals least privilege, Zero Trust en Just-in-Time access (\cite{nist_zta_800_207}).
+
+De nood aan gecontroleerde en tijdelijke toegang kwam eveneens sterk naar voren binnen de strategische PAM-roadmap van Ahold Delhaize, waar least privilege en Just-in-Time toegang als prioritaire beveiligingsdoelstellingen werden opgenomen.
+
+Een effectieve toegangscontrole gaat verder dan authenticatie alleen en houdt ook rekening met context, policies en continue controle tijdens de sessie (\cite{nist_zta_800_207}). In deze analyse wordt onderzocht hoe CyberArk, BeyondTrust, ManageEngine PAM360 en Securden deze toegangscontrole implementeren.
+\paragraph{CyberArk}
+CyberArk biedt een zeer mature en fijnmazige aanpak van toegangscontrole via een combinatie van Role-Based Access Control (RBAC), policies en identity-integraties. Toegang wordt bepaald op basis van rollen, groepslidmaatschappen en vooraf gedefinieerde regels (\cite{cyberark_pam_architecture}).
+
+De oplossing ondersteunt een zeer hoge granulariteit, waarbij toegang kan worden ingesteld op niveau van systeem, account en sessie. Functionaliteiten zoals Just-in-Time access, approval workflows en multi-factor authenticatie zijn standaard aanwezig }.
+
+Een belangrijk kenmerk is de sterke ondersteuning van Zero Standing Privileges, waarbij gebruikers geen permanente rechten hebben en toegang automatisch wordt ingetrokken na gebruik. Dit maakt CyberArk bijzonder geschikt voor complexe en streng beveiligde omgevingen (\cite{nist_zta_800_207,cyberark_psm}).
+\paragraph{BeyondTrust}
+BeyondTrust implementeert toegangscontrole via RBAC in combinatie met context-aware policies. Naast rollen wordt toegang ook bepaald op basis van factoren zoals tijdstip, locatie, toestel en risicoprofiel (\cite{beyondtrust_authentication,beyondtrust_architecture}).
+
+De oplossing ondersteunt policy-based access, Just-in-Time toegang, approval workflows en MFA-integraties. Het grote verschil met CyberArk ligt in de sterkere focus op context, waardoor toegangsbeslissingen dynamischer en flexibeler zijn (\cite{beyondtrust_authentication,beyondtrust_passwordsafe}).
+
+Dit maakt BeyondTrust bijzonder geschikt voor omgevingen met externe gebruikers of remote access, waar context een belangrijke rol speelt in beveiliging.
+\paragraph{ManageEngine PAM360}
+PAM360 biedt toegangscontrole via een klassiek RBAC-model gecombineerd met workflow-gebaseerde goedkeuringen. Toegang wordt voornamelijk bepaald op basis van rollen en policies, vaak aangevuld met manuele of automatische approvals (\cite{pam360_architecture}).
+
+De oplossing ondersteunt tijdsgebonden toegang, integratie met Active Directory en optionele MFA. In vergelijking met CyberArk en BeyondTrust is de granulariteit beperkter en ontbreekt context-aware access (\cite{pam360_architecture}).
+
+PAM360 richt zich vooral op duidelijke governance en eenvoud, waarbij controle wordt afgedwongen via goedkeuringsprocessen eerder dan via dynamische policies.
+
+\paragraph{Securden}
+Securden hanteert een vergelijkbare aanpak als PAM360 en combineert RBAC met een request-based model. Gebruikers vragen toegang aan, waarna deze op basis van policies en goedkeuring wordt toegekend (\cite{securden_pam}).
+
+De oplossing ondersteunt tijdsgebonden toegang, approval workflows en integratie met directory services. MFA is mogelijk, maar vaak afhankelijk van externe integraties (\cite{securden_pam}).
+
+De focus ligt op gebruiksgemak en snelle implementatie. Geavanceerde functionaliteiten zoals context-aware access en uitgebreide policycontrole zijn echter beperkt.
+
+\paragraph{Vergelijkende analyse}
+Alle oplossingen ondersteunen de basisprincipes van toegangscontrole, zoals RBAC, approval workflows en automatische intrekking van toegang (\cite{nist_zta_800_207}). De verschillen situeren zich vooral in granulariteit, automatisatie en contextbewustzijn.
+
+CyberArk en BeyondTrust bieden de meest geavanceerde implementaties. CyberArk blinkt uit in zeer gedetailleerde controle en volledige ondersteuning van Zero Standing Privileges, terwijl BeyondTrust sterker is in context-aware access en flexibiliteit. Beide oplossingen bieden uitgebreide policy-based toegangscontrole en zijn geschikt voor complexe omgevingen (\cite{cyberark_psm,cyberark_pam_architecture,beyondtrust_authentication,beyondtrust_passwordsafe}).
+
+PAM360 en Securden bieden dezelfde kernfunctionaliteiten, maar in een meer beperkte vorm. De granulariteit is lager, context-aware access ontbreekt en policycontrole is minder uitgebreid (\cite{pam360_architecture,securden_pam}). Hierdoor zijn deze oplossingen eenvoudiger te implementeren, maar minder geschikt voor complexe of sterk gereguleerde omgevingen.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{VergelijkingToegang.png}
+	\caption[Vergelijkingstabel Toegangscontrole]{\label{fig:VergelijkingToegang}vergelijkingstabel toegangscontrole}
+\end{figure}
+
+\subsection{Gebruiksgemak en implmentatiecomplexiteit}
+\paragraph{inleiding}
+Naast functionaliteit spelen gebruiksgemak en implementatiecomplexiteit een belangrijke rol bij de keuze van een PAM oplossing. Geavanceerde securityfeatures zijn essentieel, maar factoren zoals installatie, configuratie en dagelijks beheer bepalen in grote mate hoe praktisch een oplossing inzetbaar is binnen een organisatie.
+
+De casestudies tonen bovendien aan dat complexe onboardingprocessen, meerdere identiteiten en beperkte gebruikservaring een negatieve impact kunnen hebben op de adoptie van PAM-oplossingen binnen operationele teams.
+
+Op basis van de voorgaande analyses wordt hieronder een overkoepelende evaluatie gemaakt van CyberArk, BeyondTrust, ManageEngine PAM360 en Securden.
+
+\paragraph{CyberArk}
+CyberArk is een zeer krachtige en uitgebreide oplossing, maar dit gaat gepaard met een hoge implementatiecomplexiteit. De architectuur bestaat uit meerdere componenten en vereist een grondige configuratie en tuning (\cite{cyberark_pam_architecture}).
+
+Hoewel eindgebruikers doorgaans vlot met het platform kunnen werken, is het beheer complex en vraagt het gespecialiseerde kennis. CyberArk richt zich daarom voornamelijk op grote enterprise-omgevingen waar voldoende expertise en middelen beschikbaar zijn.
+\paragraph{BeyondTrust}
+BeyondTrust biedt een betere balans tussen functionaliteit en gebruiksgemak. De oplossing is minder complex dan CyberArk en blijft overzichtelijk dankzij een modulaire maar intuïtieve opbouw (\cite{beyondtrust_architecture}).
+
+De implementatie vraagt nog steeds enige inspanning, maar is duidelijk eenvoudiger. In combinatie met een gebruiksvriendelijke interface en flexibele configuratie maakt dit BeyondTrust geschikt voor middelgrote tot grote organisaties die krachtige functionaliteit willen zonder extreme complexiteit.
+\paragraph{ManageEngine PAM360}
+PAM360 onderscheidt zich door zijn eenvoud en snelle implementatie. De oplossing is sterk gecentraliseerd en vereist weinig componenten, waardoor installatie en configuratie relatief eenvoudig verlopen (\cite{pam360_architecture}).
+
+De interface is gebruiksvriendelijk en workflows zijn duidelijk, wat het beheer toegankelijk maakt zonder diepgaande expertise. Dit maakt PAM360 bijzonder geschikt voor kleine tot middelgrote organisaties die snel een werkende PAM-oplossing willen.
+\paragraph{Securden}
+Securden volgt een gelijkaardige aanpak als PAM360 en focust sterk op eenvoud en praktische inzetbaarheid. De implementatie is snel en de configuratie beperkt complex (\cite{securden_pam}).
+
+De oplossing biedt een duidelijke interface en eenvoudige workflows, maar minder geavanceerde mogelijkheden. Hierdoor is Securden vooral geschikt voor kleinere of minder complexe omgevingen waar gebruiksgemak primeert.
+
+\paragraph{Vergelijkende Analyse}
+De vergelijking toont een duidelijk onderscheid tussen twee groepen. CyberArk en BeyondTrust bieden uitgebreide functionaliteiten, maar vereisen een hogere implementatie-inspanning. CyberArk is hierbij het meest complex, terwijl BeyondTrust een evenwicht biedt tussen kracht en gebruiksgemak (\cite{cyberark_pam_architecture,beyondtrust_architecture}).
+
+PAM360 en Securden focussen op eenvoud en snelle inzetbaarheid. Deze oplossingen zijn gebruiksvriendelijker en minder complex, maar bieden ook minder geavanceerde mogelijkheden (\cite{pam360_architecture,securden_pam}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{VergelijkingGebruik.png}
+	\caption[Vergelijkingstabel Gebruiksgemak]{\label{fig:VergelijkingGebruik}vergelijkingstabel Gebruiksgemak}
+\end{figure}
+
+\subsection{Conclusie}
+Wanneer de verschillende criteria: Just-in-Time access, sessielogging en recording, credential vaulting en toegangscontrole en gebruiksgemak in samenhang worden bekeken, ontstaat een duidelijk en consistent beeld van de positionering van de vier PAM oplossingen.
+
+CyberArk en BeyondTrust profileren zich als de meest mature en uitgebreide oplossingen. Over alle criteria heen bieden zij een hoog niveau van automatisatie, granulariteit en beveiliging. CyberArk onderscheidt zich vooral door zijn sterk gecontroleerde, policy-gedreven aanpak en zijn focus op maximale beveiliging en Zero Standing Privileges. BeyondTrust biedt vergelijkbare functionaliteit, maar legt meer nadruk op flexibiliteit en context-aware access, wat het bijzonder geschikt maakt voor dynamische en hybride omgevingen met externe toegang. Beide oplossingen scoren consequent hoog op alle onderzochte domeinen, maar dit gaat gepaard met een hogere implementatiecomplexiteit en een grotere nood aan gespecialiseerde kennis.
+
+ManageEngine PAM360 en Securden bevinden zich duidelijk in een andere categorie. Zij ondersteunen alle kernfunctionaliteiten die verwacht worden binnen een PAM oplossing, maar doen dit op een minder diepgaande en minder geautomatiseerde manier. Hun sterkte ligt in eenvoud, gebruiksgemak en snelle implementatie. Functionaliteiten zoals JIT access, sessielogging en credential vaulting zijn aanwezig, maar vaak workflow-gebaseerd en minder verfijnd uitgewerkt. Ook op vlak van toegangscontrole en analyse blijven ze beperkter dan de marktleiders. Dit maakt hen echter niet minder relevant, maar positioneert hen eerder als toegankelijke oplossingen voor organisaties met minder complexe noden.
+
+Een belangrijk inzicht uit deze vergelijking is dat er geen “one-size-fits-all” oplossing bestaat. De verschillen tussen de tools zijn geen loutere tekortkomingen, maar weerspiegelen bewuste ontwerpkeuzes. Waar CyberArk en BeyondTrust inzetten op maximale controle, security en compliance, kiezen PAM360 en Securden voor eenvoud en praktische inzetbaarheid.
+
+De uiteindelijke keuze voor een PAM oplossing hangt daarom sterk af van de context van de organisatie. In complexe, sterk gereguleerde omgevingen met hoge security-eisen zijn CyberArk en BeyondTrust duidelijk de meest geschikte opties. In kleinere of minder mature omgevingen, waar snelheid van implementatie en gebruiksgemak primeren, bieden PAM360 en Securden een valabel en vaak efficiënter alternatief.
+
+Deze bevindingen sluiten nauw aan bij de strategische keuzes die binnen de casestudies van Ahold Delhaize naar voren kwamen, waarbij governance, auditing, automatisatie, gebruikservaring en implementatiecomplexiteit een belangrijke rol speelden bij het evalueren en prioriteren van PAM-capabilities binnen een internationale enterprise-omgeving.
+
+
+

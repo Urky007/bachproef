@@ -15,70 +15,135 @@
 \section{Inleiding}%
 \label{sec:inleiding}
 
-Waarover zal je bachelorproef gaan? Introduceer het thema en zorg dat volgende zaken zeker duidelijk aanwezig zijn:
+Het Beveiligen an beheerderstoegang tot servers vormt een crutiale uitdaging binnen moderne IT-omgevingen. Systeem- en netwerkadministratoren verbinden dagelijks aan toestellen zoals servers via protocollen zoals Secure Shell en Remote Desktop Protocol om zo de toestellen te beheren en onderhouden. Deze vormen van toegang vereisen echter verhoogde rechten, waardoor zij een aantrekkelijk doelwit vormen voor misbruik. Dit kan zowel misbruik zijn van externe aanvallers, maar evengoed door interne fouten of nalatigheid. Als beheertoegang langdurig wordt toegekend en onvoldoende wordt gelogd neemt het risico op incidenten aanzienlijk toe.
 
+De aanleiding van dit onderzoek ontstond tijdens een interview met een IT-medewerker van Ahold Delhaize group. Dit interview vond oorspronkelijk plaats in kader van agile werken voor het vak Buisness analyse. Tijdens het interview kwam naar voren dat Ahold Delhaize een grootschalig project rond Privileged Access Managemnt had opgestart naar aanlleiding van een ernstige beveiligingsincident het jaar voordien. Volgens de informatie die de medewerker mij op dat moment kon geven bleek dat er onvoldoende zicht was op wie wanneer beheerderstoegang gebruikte. Dit verhaal inspireerde mij om dieper in te gaan op de rol van Privileged Access Management bij het beveiligen van servertoegang. Ik ging zelf checken of dit inderdaad een vaker voorkomend probleem is door te kijken bij de owasp top 10 en andere ranglijsten van veel voorkomende IT zwakten.
+
+Uit mijn onderzoek blijkt dat dit inderdaad een veel voorkomend probleem. Niet enkel is het veel voorkomend maar ook is vaak de impact van het misbruiken van toegansrechten een zwakte die grote gevolgen kan hebben. Daarom heb ik volgende onderzoeksvraag geformuleerd: Hoe kan een Privileged Access Managment tool bijdragen aan de beveiliging van servers?
+
+Het hoofddoel van dit onderzoek is bepalen hoe beheerderstoegang tot servers via Secure Shell (SSH) en Remote Desktop Protocol (RDP) beter kan worden beveiligd. Dit doormiddel van een Privileged Access Management-tool (PAM). Bij het bepalen van de geschikte PAM-tool zal een grote vereiste zijn dat beheerderstoegang niet langdurig en niet ongelogd mag zijn. Concreet betekend dit dat beheerders enkel tijdelijke toegang zullen krijgen. Ook zullen alle sessies gelogd moeten worden. Tot slot zullen permenente verhoogde toegangsrechten vermeden worden.
+
+Dit onderzoek wordt uitgevoerd in de vorm van toegepast onderzoek en zal bestaan uit twee delen. Enerzijds zal er een literatuurstudie worden uitgevoerd waarin bestaande kennis, richtlijnen en martanalyes omtrend PAM worden uitgevoerd. Anderzijds zal er een proof-of-concept uitgewerkt worden waarin concreet wordt aangetoond hoe een PAM-tool de risicos omtrend beheerderstoegang via SSH en RDP kan verminderen.
+
+De doelgroep van deze bachelorproef bestaat uit systeem-en netwerkbeheerders binnen organisaties die hun infrastructuur in eigen handen hebben.
+
+Om een gestaafd antwoord te geven op de onderzoeksvraag zal ik ook antwoord bieden op volgende deelvragen:
 \begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
+	\item Welke beveiligingsrisico’s zijn verbonden aan langdurige en ongelogde beheertoegang tot servers via SSH en RDP?
+	\item Welke functionaliteiten bieden Privileged Access Management-oplossingen om tijdelijke en gelogde beheertoegang af te dwingen?
+	\item In welke mate verschillen PAM-oplossingen van elkaar op het vlak van sessielogging en sessierecording?
+	\item Hoe ondersteunen PAM-oplossingen Just-in-Time toegang en het principe van Zero Standing Privileges?
+	\item In welke mate kan een PAM-oplossing praktisch worden toegepast om beheertoegang tot servers via SSH en RDP te beveiligen binnen een proof-of-concept?
 \end{itemize}
 
-Denk er aan: een typische bachelorproef is \textit{toegepast onderzoek}, wat betekent dat je start vanuit een concrete probleemsituatie in bedrijfscontext, een \textbf{casus}. Het is belangrijk om je onderwerp goed af te bakenen: je gaat voor die \textit{ene specifieke probleemsituatie} op zoek naar een goede oplossing, op basis van de huidige kennis in het vakgebied.
-
-De doelgroep moet ook concreet en duidelijk zijn, dus geen algemene of vaag gedefinieerde groepen zoals \emph{bedrijven}, \emph{developers}, \emph{Vlamingen}, enz. Je richt je in elk geval op it-professionals, een bachelorproef is geen populariserende tekst. Eén specifiek bedrijf (die te maken hebben met een concrete probleemsituatie) is dus beter dan \emph{bedrijven} in het algemeen.
-
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
-
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
 
 %---------- Stand van zaken ---------------------------------------------------
 
 \section{Literatuurstudie}%
 \label{sec:literatuurstudie}
 
-Hier beschrijf je de \emph{state-of-the-art} rondom je gekozen onderzoeksdomein, d.w.z.\ een inleidende, doorlopende tekst over het onderzoeksdomein van je bachelorproef. Je steunt daarbij heel sterk op de professionele \emph{vakliteratuur}, en niet zozeer op populariserende teksten voor een breed publiek. Wat is de huidige stand van zaken in dit domein, en wat zijn nog eventuele open vragen (die misschien de aanleiding waren tot je onderzoeksvraag!)?
+In verschillende academische en professionele literatuur wordt bevoorrechte toegang als een fundamenteel aandachtspunt beschouwd. Privileged of administrator accounts beschikken over geavanceerde rechten die je toelaten om configuraties te wijzigen, beveiligingsmechanismen te omzeilen en directe toegang te verkrijgen tot infrastructuur zoals servers. Misbruik van deze accounts wordt ook geïdentificeerd als een oorzaak met hoge impact bij beveiligingsincidenten. (oluoha et al., 2025)
 
-Je mag de titel van deze sectie ook aanpassen (literatuurstudie, stand van zaken, enz.). Zijn er al gelijkaardige onderzoeken gevoerd? Wat concluderen ze? Wat is het verschil met jouw onderzoek?
+Internationale richtlijnen bevestigen dit beeld. Het NIST Special Publication 800⁻53 framework benaddrukt dat onvoldoende controle van beheerdersrechten een risico vormt voor integriteit en acountability(NIST SP 800-53)
 
-Verwijs bij elke introductie van een term of bewering over het domein naar de vakliteratuur, bijvoorbeeld~\autocite{Hykes2013}! Denk zeker goed na welke werken je refereert en waarom.
+Ook binnen de OWASP Top 10 sluit deze problematiek nauw aan bij meerdere categorieën. Vooral broken Access Control en Identification and Authentication Failures. Deze worden beschreven als veelvoorkomnede oorzaken van beveiligingsincidenten. OWASP benadrukt dat het toekennen van overmatige rechten aanvallers in staat stelt om lateraal door systemen te bewegen. 
 
-Draag zorg voor correcte literatuurverwijzingen! Een bronvermelding hoort thuis \emph{binnen} de zin waar je je op die bron baseert, dus niet er buiten! Maak meteen een verwijzing als je gebruik maakt van een bron. Doe dit dus \emph{niet} aan het einde van een lange paragraaf. Baseer nooit teveel aansluitende tekst op eenzelfde bron.
+Binnen dit kader wordt Privileged Access Management geposisioneerd als een gespecialiseerde beveiligingsoplossing die gericht is op het beschermen, beheren en monitoren van verhoogde toegang. Gartner definieert PAM als technologie die beheerderstoegang controleert. Dit door het beheren van accounts, credentials en sessies die gebruikt worden voor het beheren van zowel systemen als applicaties (Gartner, 2025)
 
-Als je informatie over bronnen verzamelt in JabRef, zorg er dan voor dat alle nodige info aanwezig is om de bron terug te vinden (zoals uitvoerig besproken in de lessen Research Methods).
+In zowel academische literatuur als in de Gartner Magic quadrant wordt er aangegeven dat klassieke toegenbeheersystemen tekortschieten. Dit omdat zij meestal geen zicht bieden op wat gebruikers met verhoogde rechten effectief uitvoeren na succesvolle authenticatie.
 
-% Voor literatuurverwijzingen zijn er twee belangrijke commando's:
-% \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
-%   geen onderdeel is van de zin.
-% \textcite{KEY} => Auteur (jaartal)  Gebruik dit als de auteursnaam wel een
-%   functie heeft in de zin (bv. ``Uit onderzoek door Doll & Hill (1954) bleek
-%   ...'')
+Een van de belangrijkste technische aandachtspunten binnen PAM is privileged session Management. Hierbij wordt beheerderstoegang tot servers centraal gefaciliteerd via gecontroleerde sessies. Systeem- en netwerkbeheerders maken hierbij gebruik van protocollen zoals SSH en RDP om systemen te beheren. De literatuur wijst erop dat onbeveiligde of niet-gelogde sessies een risico vormen. Sessies die niet gelogt worden kunnen namelijk achteraf niet getraceerd worden. Zo blijft misbruik vaak onopgemerkt (oluoha et al., 2025).
 
-Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur van de tekst kan verduidelijken.
+Ook dit gebrek aan zichtbaarheid sluit nauw aan bij enkele OWASP-categorieën. Het voornaamste voorbeeld hiervan is Security Logging and Monitoring Faliures. Hier is het ontbreken van voldoende logging en monitoring aangeduid als een belangrijke oorzaak van laattijdige detectie van incidenten.
+
+Om de risico's die hierboven staan vermeld te beperken, benadrukken recente studies het belang van Just-in-Time toegang. Dit in combinatie van het vermijden van langdurige beheerdersrechten. Gartner beschrijft Just-in-Time privilege management als een kernfuncionaliteit van moderne PAM-tools. 
+
+Deze aanpak past perfect ook binnen het principe van least privilege zoals aanbevolen door NIST. Dit verlaagt ook het risico op privilege escalation en misbruik van gecompromitteerde accounts volgens OWASP.
+
+Verder wordt er in de literatuur sterk ingezet op loggins, auditing en sessierecording als essentiële componenten van effectieve PAM-implementaties.
+
+Marktanalyses tonen aan dat PAM-tools zich steeds verder ontwikkelen, maar dat er aanzienlijke verschillen zijn tussen vendors. De Gartner Magic Quadrant en de Coice of the Customer-studie benadrukken dat organisaties vooral waarde hechten aan afdwingbare tijdelijke toegang, betrouwbare sessielogging en transparantie. Dit terwlijk implementatiecomplexiteit en inconsitent gedrag tussen tools maar aandachtspunten blijven (Gartner, 2025). Dit bevestigt nogmaals dat enkel het inzetten van PAM niet genoeg is. Maar dat de concrete configuratie bepalend is voor beveiligingswinst.
+
+Hoewel er al veel bestaande literatuur en marktstudies zijn over het belang van PAM uitvoerig onderbouwen en bewijzen dat er concrete beveiligingsrisico's mee verholpen worden, blijft toegepast onderzoek beperkt. Er is weinig literatuur beschikbaar die PAM-functionaliteiten praktisch evalueert binnen concrete senario's zoals het afdwingen van tijdelijke, volledige gelogde beheerderstoegang. Dit via SSH en RDP. Deze bachelorproef zal daar zich daar specifiek over ontvermen door theoretische inzichten uit de literatuur te combineren met een proof-of-concept waarin PAM-functionaliteiten concreet worden getest en geëvalueerd in relatie tot bekende kwetsbaarheden.
 
 %---------- Methodologie ------------------------------------------------------
 \section{Methodologie}%
 \label{sec:methodologie}
 
-Hier beschrijf je hoe je van plan bent het onderzoek te voeren. Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
+Deze bachelorproef kan worden gecategoriseerd als een vergelijkende studie gecombineerd met een proof of concept. Het onderzoek bestaat uit twee duidelijk afgebakende hoofddelen. In het eerste deel worden verschillende PAM-tools met elkaar vergeleken op basis van vastgestelde criteria. In het tweede deel wordt een proof-of-conceptomgeving opgezet waarin een commerciële PAM-tool wordt vergeleken met een open-source alternatief. Deze aanpak laat toe om zowel theoretische verschillen als praktische effecten van PAM-tools objectief te evalueren.
 
-Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
+voor het beantwoorden van de onderzoeksvragen zal ik gebruik maken van volgende onderzoekstechnieken
 
-Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
+\begin{itemize}
+	\item Literatuurstudie van academische publicaties, internationale standaarden en professionele marktanalyses (o.a. Gartner, NIST, OWASP)
+	\item Vergelijkende studie op basis van vooraf gedefinieerde en meetbare criteria
+	\item Experiment en proof of concept, waarbij PAM-oplossingen technisch worden geïmplementeerd en getest in een gecontroleerde omgeving
+\end{itemize}
 
-Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
 
-Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
+Deel 1: Vergelijkende studie van PAM-vendors
+Doel en scope
+Het eerste onderzoeksdeel heeft als doel verschillen tussen bestaande PAM-tools systematisch in kaart te brengen. De vergelijking richt zich op marktleiders die besproken en bestudeerd worden in de Gartner Magic Quadrant en Gartner Voice of the Customer-rapporten. 
+aanpak
+De vergelijkende studie wordt uitgevoerd aan de hand van een gestructureerde literatuurstudie. Voor elke vendor die vergeleken zal worden, zal er onderzoek gedaan worden in bestaande literatuur zoals: officiële productdocumentatie, technische whitepapers en onafhankelijke marktanalyses.
+De vergelijking wordt uitgevoerd aan de hand van volgende deelvragen:
+\begin{itemize}
+	\item Welke verschillen bestaan er tussen PAM-oplossingen op het vlak van authenticatie en toekenning van beheertoegang?
+	\item In welke mate maken PAM-oplossingen gebruik van artificiële intelligentie voor monitoring en analyse?
+	\item Welke PAM-oplossingen bieden ondersteuning voor cloud- en machine-toegang?
+	\item In welke mate ondersteunen PAM-oplossingen veilig remote beheer, inclusief externe of third-party toegang?
+	\item Welke verschillen bestaan er op het vlak van gebruiksgemak en implementatiecomplexiteit?
+\end{itemize}
+Resultaat van deel 1
+het resultaat van dit deel zal bestaan uit:
 
-Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+\begin{itemize}
+	\item Een vergelijkende tabel met PAM-oplossingen en hun functionele kenmerken
+	\item Een kwalitatieve analyse van sterke en zwakke punten per vendor
+	\item Een gemotiveerde selectie van één commerciële PAM-oplossing die wordt gebruikt in het proof-of-conceptgedeelte
+\end{itemize}
 
+Deel2: Proof of concept
+Doel en onderzoekstechniek
+Het tweede onderzoeksdeel bestaat uit een technische proof of concept. Hier zal een PAM-tool toegepast worden op een gesimuleerde bedrijfsomgeving om zo de impact van de PAM-tool aan te tonen. Dit zal gebeuren door een commerciële tool maar ook een open source tool op te zetten. Dit experiment maakt het mogelijk om theoretische verschillen uit de literatuur om te zetten in meetbare praktijkresultaten.
+
+Opzet van testomgeving
+
+De proof of concept omgeging wordt opgezet in een geïsoleerde testomgeving en bestaat minimaal uit:
+
+\beign{itemize}
+\item Eén of meerdere servers die beheerd worden via SSH en Remote Desktop Protocol
+\item Een commerciële PAM-oplossing geselecteerd uit deel 1
+\item Een open-source PAM-oplossing
+\item Gesimuleerde beheerdersaccounts
+\end{itemize}
+in de omgeving wordt getest in welke mate beide oplossingen erin slagen om:
+
+\begin{itemize}
+\item langdurige beheerdersrechten te vermijden
+\item Tijdelijke, Just-in-Time toegang af te dwingen
+\item Beheerderssessies te loggen en op te nemen
+\item Onbeheerde of directe toegang tot servers te blokkeren
+\end{itemize}
+
+Vergelijkingscriteria
+de vergelijking gebeurt aan de hand van meetbare technische criteria zoals:
+\begin{itemize}
+\item Mogelijkheid tot Just-in-Time toegang
+\item Aanwezigheid en deelniveau van sessielogging
+\item Automatische intrekking van toegangsrechten
+\item Gebruiksgemak bij dagelijkse beheerhandelingen
+\end{itemize}
+
+Resultaat van deel 2
+het resultaat van dit deel bestaat uit:
+\begin{itemize}
+\item Een werkende proof-of-conceptomgeving
+\item Screenshots en logbestanden
+\item een vergelijkende evaluatie tussen de commerciële en open-source PAM-tool
+\end{itemize}
 %---------- Verwachte resultaten ----------------------------------------------
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
-
-Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
-
-Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
-
+Op basis van de literatuur en marktanalyses wordt verwacht dat uit de vergelijkende studie duidelijk zal blijken dat de verschillende PAM-tools significant verschillen in functionaliteiten en 

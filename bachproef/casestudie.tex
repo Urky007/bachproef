@@ -1,0 +1,146 @@
+\chapter{Casestudie}
+\label{ch:casestudie}
+\section{Casestudie 1 – Strategische heroriëntatie van PAM binnen Ahold Delhaize}
+\subsection{Aanleiding voor de PAM-transformatie}
+Deze casestudie beschrijft de strategische heroriëntatie van de Privileged Access Management (PAM)-omgeving binnen Ahold Delhaize. De informatie in deze case study is afkomstig van Joris Hermans, Global Design Architect binnen Ahold Delhaize, betrokken bij de strategische visie, architectuur en verdere evolutie van de PAM-omgeving en de toekomstige doelarchitectuur. Hierdoor sluit deze casestudie nauw aan bij de doelstelling van deze bachelorproef, namelijk het analyseren van de vereisten, prioriteiten en evaluatiecriteria van moderne PAM-oplossingen binnen complexe enterprise-omgevingen.
+
+De heroriëntatie van de PAM-omgeving maakte deel uit van een bredere strategische visie rond Identity and Access Management (IAM) en de verdere standaardisatie van privileged access binnen de internationale IT-omgeving van Ahold Delhaize. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide3.png}
+	\caption[De focus van heroriëntatie (\cite{ahold_pam_target_state}).]{\label{fig:DelhaizeHeroriëntatie}De focus van heroriëntatie (\cite{ahold_pam_target_state}).}
+\end{figure}
+
+Door de sterke groei van de organisatie, de aanwezigheid in meerdere regio’s en de evolutie naar hybride infrastructuren ontstond de nood aan een meer uniforme en centraal beheerde aanpak voor privileged access management.
+
+Uit de analyse van de bestaande omgeving bleek dat de PAM-architectuur doorheen de jaren gefragmenteerd was geraakt. Ahold Delhaize maakte gebruik van meerdere regionale CyberArk-instances, waaronder aparte omgevingen voor de Verenigde Staten, Nederland en BeSEE (België, Servië, Roemenië en Griekenland). Hierdoor moesten beheerders meerdere identiteiten gebruiken om systemen in verschillende regio’s te beheren, wat leidde tot een complexe gebruikerservaring en bijkomende beheerslast. Daarnaast was toegang tot de PAM-omgeving vaak afhankelijk van VPN-verbindingen, Citrix of interne netwerken, wat de toegankelijkheid en operationele efficiëntie beperkte. 
+
+Naast deze technische fragmentatie werden ook verschillende operationele en organisatorische tekortkomingen vastgesteld. Provisioning van privileged access gebeurde grotendeels manueel en vereiste samenwerking tussen meerdere teams, tools en processen. Hierdoor kon het meerdere weken duren alvorens toegang effectief beschikbaar was. Daarnaast ontbraken gecentraliseerde governance, uniforme PAM-standaarden en duidelijke KPI’s om de maturiteit en adoptie van privileged access management op te volgen. 
+
+Ook op vlak van monitoring en compliance werden tekortkomingen vastgesteld. Logging en auditing van privileged activiteiten waren beperkt aanwezig en er bestond onvoldoende zicht op verdachte of afwijkende privileged activiteiten. Daarnaast werden problemen vastgesteld rond password rotation, account lock-outs en sessiebeheer, wat een negatieve impact had op zowel de beveiliging als de gebruikservaring van beheerders. 
+
+Verder stelde Ahold Delhaize vast dat bestaande PAM-processen onvoldoende aansloten bij moderne IT-omgevingen en DevOps-werkwijzen. Onder andere het beheer van secrets, API-keys en service accounts was onvoldoende gestandaardiseerd, waardoor hardcoded credentials en lokale opslag van secrets nog frequent voorkwamen. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide13.png}
+	\caption[Huidige staat van uitdagingen (\cite{ahold_pam_target_state}).]{\label{fig:DelaizeHuidigeStaat}Huidige staat van uitdagingen (\cite{ahold_pam_target_state}).}
+\end{figure}
+
+Om deze uitdagingen aan te pakken werd een strategische PAM-roadmap opgesteld. Hierbij lag de focus niet uitsluitend op technologische functionaliteiten, maar ook op governance, automatisatie, gebruikservaring en compliance. Belangrijke doelstellingen waren onder meer het centraliseren van privileged access, het verbeteren van onboarding en self-service provisioning, het implementeren van Just-in-Time toegang, het versterken van monitoring en auditing en het reduceren van operationele complexiteit binnen de internationale IT-omgeving. 
+
+\subsection{Strategische doelstellingen van de PAM-roadmap}
+Op basis van de analyse van de bestaande PAM-omgeving definieerde Ahold Delhaize een strategische roadmap voor de verdere evolutie van privileged access management binnen de organisatie. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide16.png}
+	\caption[PAM use cases (\cite{ahold_pam_target_state}).]{\label{fig:DelhaizeUseCases}Pam use cases (\cite{ahold_pam_target_state}).}
+\end{figure}
+
+Deze roadmap had als doel om niet alleen de beveiliging van privileged accounts te verbeteren, maar ook operationele efficiëntie, governance en gebruikservaring te optimaliseren binnen een complexe internationale IT-omgeving.
+
+Een eerste belangrijke doelstelling was het verbeteren van governance en standaardisatie binnen de PAM-omgeving. De bestaande situatie met meerdere regionale CyberArk-omgevingen, verschillende provisioningprocessen en beperkte centrale controle zorgde voor verhoogde operationele complexiteit. Daarom werd sterk ingezet op gecentraliseerde governance, uniforme PAM-standaarden en een centraal PAM-team dat verantwoordelijk is voor ondersteuning, kwaliteitscontrole en compliance. Daarnaast werd het opzetten van KPI’s, KRI’s en governance reporting beschouwd als een belangrijke vereiste om de maturiteit van het PAM-programma op te volgen. 
+
+Ook gebruikservaring en operationele efficiëntie werden beschouwd als belangrijke strategische aandachtspunten. Binnen de roadmap werd expliciet verwezen naar “frictionless access”, self-service provisioning en toegang onafhankelijk van locatie of netwerksegment. Problemen zoals VPN-afhankelijkheid, meerdere login-identiteiten en complexe onboardingprocessen hadden volgens Ahold Delhaize een negatieve impact op de adoptie van de PAM-oplossing. Hierdoor werden automatisatie, onboarding en cross-domain access belangrijke doelstellingen binnen de verdere evolutie van de PAM-omgeving. 
+
+Daarnaast werd sterk ingezet op Just-in-Time toegang, least privilege en tijdelijke privilege-elevatie. Permanente privileged rechten werden beschouwd als een belangrijk beveiligingsrisico. Daarom werd gekozen voor een combinatie van Azure PIM en CyberArk om privileged toegang zoveel mogelijk tijdelijk en gecontroleerd toe te kennen. Functionaliteiten zoals JIT access, password rotation, credential vaulting en session monitoring maakten hierdoor deel uit van de gewenste doelarchitectuur. 
+
+Ook monitoring, auditing en compliance speelden een centrale rol binnen de roadmap. Ahold Delhaize wilde meer zicht krijgen op privileged activiteiten door uitgebreide logging, sessierecording, SIEM-integratie en continuous compliance monitoring. Hierbij lag de focus niet alleen op menselijke gebruikers, maar ook op non-human identities, service accounts en DevOps-omgevingen. 
+
+Verder werd binnen de roadmap veel aandacht besteed aan secrets management en DevOps-integratie. Ahold Delhaize stelde vast dat hardcoded credentials, lokale opslag van secrets en beperkte controle op CI/CD pipelines belangrijke risico’s vormden binnen moderne hybride infrastructuren. Daarom werden dynamic secrets management, API-integratie, CI/CD onboarding en geautomatiseerde credential retrieval opgenomen als strategische doelstellingen binnen de verdere evolutie van de PAM-omgeving. 
+
+De strategische roadmap toont aan dat Ahold Delhaize PAM niet uitsluitend beschouwt als een oplossing voor password management, maar als een breder governance- en beveiligingsplatform dat geïntegreerd moet worden binnen identity management, cloudomgevingen, DevOps-processen en complianceframeworks.
+
+\subsection{Hoe maakte Ahold Delhaize hun keuzes?}
+Naast het definiëren van strategische doelstellingen werkte Ahold Delhaize eveneens een gefaseerde roadmap uit voor de verdere evolutie van het PAM-programma. Hierbij werden verschillende capabilities geprioriteerd op basis van risico, operationele impact, implementatiecomplexiteit en maturiteit van de organisatie. De roadmap maakt hierbij onderscheid tussen initiatieven die onmiddellijk noodzakelijk waren (“Do Now”), uitbreidingen op middellange termijn (“Do Next”) en verdere maturiteitsverbeteringen (“Do Later”).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide33.png}
+	\caption[Voorgestelde PAM initiatieven (\cite{ahold_pam_target_state}).]{\label{fig:DelhaizePamInitiatieven}Voorgestelde PAM initiatieven (\cite{ahold_pam_target_state}).}
+\end{figure}
+ 
+Binnen de eerste fase lag de focus voornamelijk op snelle risicoreductie en het versterken van fundamentele PAM-capabilities. Functionaliteiten zoals credential vaulting, onboarding van privileged accounts, governance, Just-in-Time toegang, password rotation en auditing werden beschouwd als essentiële vereisten voor het PAM-programma. Ook onboarding van kritieke accounts, cloud administrators en high-risk applicaties kreeg een hoge prioriteit binnen deze fase. 
+
+Daarnaast werd sterk ingezet op centrale governance en compliancecontrole. Ahold Delhaize beschouwde uniforme policies, centrale rapportering en continuous compliance monitoring als noodzakelijke bouwstenen om privileged access op schaal beheersbaar te maken binnen de internationale organisatie. Functionaliteiten rond logging, monitoring en SIEM-integratie werden daarom eveneens als prioritaire capabilities opgenomen. 
+
+In een volgende fase (“Do Next”) verschoof de focus meer richting automatisatie, lifecycle management en bredere integratie van PAM binnen cloud- en DevOps-omgevingen. Hierbij werden onder andere CI/CD-integratie, dynamic secrets management, role mining en bredere onboarding van applicaties en infrastructuurtools verder uitgewerkt. Ook cloud access management en verdere automatisatie van provisioningprocessen maakten deel uit van deze fase. 
+
+Meer mature initiatieven werden opgenomen binnen de “Do Later”-fase van de roadmap. Hieronder vallen onder andere de consolidatie van de verschillende regionale CyberArk-omgevingen, de evaluatie van CyberArk SaaS-oplossingen en verdere optimalisatie van security analytics en compliance monitoring. Deze initiatieven hadden als doel om de operationele complexiteit verder te reduceren en de globale governance van het PAM-landschap te verbeteren. 
+
+De roadmap toont daarnaast aan dat Ahold Delhaize rekening hield met het benodigde implementatie- en beheertraject van verschillende capabilities. Functionaliteiten zoals DevOps-integratie, secrets management en globale consolidatie werden beschouwd als complexere trajecten met een hogere implementatie-inspanning. Andere capabilities, zoals onboarding van accounts, auditing en password rotation, konden sneller worden uitgerold en werden daarom prioritair ingepland binnen de eerste fases van het programma. 
+
+Uit deze roadmap blijkt duidelijk dat Ahold Delhaize bepaalde PAM-functionaliteiten als essentiële “must-have” capabilities beschouwde. Hieronder vallen onder andere governance, credential vaulting, Just-in-Time toegang, auditing, onboarding en automatisatie. Andere capabilities, zoals volledige consolidatie, SaaS-migratie en geavanceerde analytics, werden eerder beschouwd als latere maturiteitsstappen binnen de verdere evolutie van het PAM-programma.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide36.png}
+	\caption[Voorgestelde Roadmap (\cite{ahold_pam_target_state}).]{\label{fig:DelhaizeRoadmap1}Voorgestelde Roadmap deel 1 (\cite{ahold_pam_target_state}).}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{DelhaizeSlide37.png}
+	\caption[Voorgestelde Roadmap deel 2 (\cite{ahold_pam_target_state}).]{\label{fig:DelhaizeRoadmap2}Voorgestelde Roadmap deel 2 (\cite{ahold_pam_target_state}).}
+\end{figure}
+
+De gefaseerde aanpak toont aan dat de keuze voor een PAM-oplossing binnen enterprise-omgevingen niet uitsluitend gebaseerd is op technische functionaliteiten, maar eveneens op schaalbaarheid, gebruikservaring, operationele efficiëntie, governance en integratiemogelijkheden binnen hybride infrastructuren.
+
+\subsection{Conclusie}
+
+Deze casestudie toont aan dat de heroriëntatie van de PAM-omgeving binnen Ahold Delhaize veel verder ging dan enkel password management. PAM werd beschouwd als een strategisch platform voor governance, compliance en veilige toegang binnen een complexe internationale IT-omgeving.
+
+Uit de analyse blijkt dat Ahold Delhaize prioritair inzette op governance, credential vaulting, Just-in-Time toegang, auditing, onboarding en automatisatie. Daarnaast speelden ook moderne uitdagingen rond cloudomgevingen, DevOps-processen en secrets management een belangrijke rol binnen de verdere evolutie van het PAM-programma.
+
+De roadmap toont bovendien aan dat enterprise-organisaties PAM-oplossingen niet uitsluitend beoordelen op technische functionaliteiten, maar ook op gebruikservaring, schaalbaarheid, automatisatie en integratiemogelijkheden binnen hybride infrastructuren. Deze strategische prioriteiten vormen een belangrijke basis voor de verdere vergelijkende analyse binnen deze bachelorproef.
+
+\section{Casestudie 2 – Operationele implementatie van PAM binnen storagebeheer bij Ahold Delhaize}
+\subsection{Inleiding en context}
+Deze tweede casestudie bouwt verder op de strategische PAM-heroriëntatie die in de voorgaande case study werd besproken. Waar de eerste casestudie focust op de organisatorische uitdagingen, governanceproblemen en strategische keuzes binnen Ahold Delhaize, behandelt deze casestudie de praktische implementatie van Privileged Access Management binnen een operationele storageomgeving.
+
+De casestudie is gebaseerd op een interview met een senior storage engineer binnen Ahold Delhaize, verantwoordelijk voor het beheer van storage-infrastructuur en SAN-switches in meerdere landen, waaronder België, Roemenië, Griekenland en Servië. Hierdoor biedt deze case een concreet inzicht in de manier waarop de strategische PAM-doelstellingen vertaald worden naar dagelijkse operationele processen en technische vereisten. 
+
+De case situeert zich binnen een grootschalig securityprogramma dat werd opgestart naar aanleiding van een beveiligingsincident in de Verenigde Staten. Als reactie hierop werd beslist om privileged access tot kritieke infrastructuur centraal te beheren via een Privileged Access Management-oplossing, met name CyberArk. Deze beslissing sluit aan bij de bredere enterprisevisie die in de eerste casestudie werd besproken, waarbij centralisatie, governance en gecontroleerde toegang als belangrijke doelstellingen naar voren kwamen. 
+
+De operationele omgeving is complex en geografisch verspreid. De verantwoordelijkheden omvatten het beheer van SAN-switches en storageplatformen, het uitvoeren van upgrades en migraties, het oplossen van incidenten en het ondersteunen van operationele aanvragen. Tegelijk evolueert de omgeving continu, met geplande migraties naar nieuwe platformen, vervanging van infrastructuur en integratie met cloudomgevingen. Deze dynamiek verhoogt de nood aan veilige en gecontroleerde toegang tot systemen. 
+
+
+\subsection{Technische omgeving en toegangsmodellen}
+De infrastructuur bestaat uit een combinatie van SAN-switches en storageplatformen van verschillende vendors. SAN-switches van Brocade en Cisco worden beheerd via SSH en HTTPS, terwijl storageplatformen van onder andere Pure Storage, IBM en Dell eveneens via deze protocollen toegankelijk zijn. Voor al deze systemen zijn verhoogde rechten vereist.
+ 
+Voor de implementatie van CyberArk werd gewerkt met verschillende types accounts, waaronder domain accounts (NPA’s), lokale administratoraccounts, service accounts en break-glass accounts voor noodtoegang. Toegang werd georganiseerd via rollen zoals Array Admin, SAN System Administrator en read-only toegang, beheerd via een centraal platform (DUAM).
+ 
+Deze omgeving sluit nauw aan bij de PAM use-cases die binnen de strategische target architectuur van Ahold Delhaize werden gedefinieerd. Daarbij wordt onderscheid gemaakt tussen human identities, non-human identities, service accounts en lokale privileged accounts, elk met specifieke toegangs- en beveiligingsvereisten. 
+
+Hoewel deze aanpak reeds een bepaalde structuur bood, kende ze belangrijke beperkingen op vlak van controle, auditing en centrale governance. Vooral het gebruik van gedeelde accounts en directe toegang tot kritieke infrastructuur zorgde voor beperkte traceerbaarheid van gebruikersacties en verhoogde beveiligingsrisico’s. 
+
+\subsection{Probleemstelling en doelstelling}
+Voor de invoering van PAM gebeurde toegang tot systemen voornamelijk via directe verbindingen met persoonlijke of gedeelde accounts. Dit leidde tot een gebrek aan centrale controle, beperkte zichtbaarheid op het gebruik van privileged access en moeilijke traceerbaarheid van acties. Daarnaast was wachtwoordbeheer vaak manueel en ontbrak uitgebreide logging en auditing. 
+
+Deze operationele uitdagingen sluiten sterk aan bij de problemen die binnen de strategische analyse van Ahold Delhaize werden vastgesteld, waaronder beperkte compliance monitoring, gefragmenteerde governance en onvoldoende auditing van privileged activiteiten.
+ 
+Na het beveiligingsincident werd dit als een kritisch risico beschouwd. De implementatie van CyberArk had daarom als doel om privileged access te centraliseren, credentials veilig op te slaan en toegang enkel tijdelijk en gecontroleerd toe te kennen. Daarnaast werd ingezet op volledige logging en auditing, met als belangrijk principe dat beheerders niet langer rechtstreeks inloggen op systemen, maar via een gecontroleerde PAM-omgeving werken.
+ 
+De case toont bovendien aan dat operationele teams nood hebben aan een oplossing die niet enkel veilig is, maar ook efficiënt inzetbaar blijft binnen dagelijkse beheeractiviteiten. Dit sluit aan bij de strategische focus van Ahold Delhaize op gebruikservaring, automatisatie en het reduceren van operationele complexiteit binnen PAM-processen. 
+
+\subsection{Implementatie en technische vereisten}
+
+De implementatie van CyberArk gebeurt via een gestructureerde aanpak waarbij gebruik wordt gemaakt van Non-Personal Accounts (NPA’s). Het aantal accounts wordt afgestemd op de grootte van het team en de regio, en deze worden gedeeld per rol.
+ 
+Er wordt een duidelijke scheiding gehanteerd tussen accounttypes: domain accounts voor dagelijkse toegang, lokale administratoraccounts voor noodsituaties en service accounts voor integraties. Credentials worden centraal opgeslagen in de CyberArk Vault, terwijl break-glass accounts beheerd worden via Azure Key Vault. Wachtwoorden worden automatisch geroteerd en gebruikers hebben geen directe toegang tot credentials.
+ 
+Deze implementatie sluit aan bij de strategische PAM-capabilities die binnen de target state architectuur van Ahold Delhaize werden gedefinieerd, waaronder credential vaulting, password rotation, Just-in-Time toegang, monitoring en auditing.
+ 
+Beheerders maken gebruik van SSH en HTTPS om systemen te beheren en moeten daarnaast bestanden kunnen overdragen en updates uitvoeren zonder impact op hun workflows. Dit vereist een oplossing die zowel flexibel als strikt gecontroleerd is.
+ 
+Op basis van deze praktijkcontext worden een aantal belangrijke requirements gedefinieerd voor de verdere studie. De oplossing moet integreren met Active Directory, role-based access control ondersteunen en Just-in-Time toegang mogelijk maken. Daarnaast is ondersteuning nodig voor credential vaulting met password rotation, sessielogging en recording, en volledige traceerbaarheid van gebruikersacties.
+ 
+Ook operationele vereisten spelen een belangrijke rol, zoals ondersteuning voor SSH en HTTPS, file transfers en command execution. Tot slot moet de oplossing voldoen aan security- en compliancevereisten, waaronder audit trails, detectie van abnormaal gedrag en ondersteuning voor principes zoals least privilege en Zero Trust. Schaalbaarheid is eveneens essentieel, gezien de multi-region omgeving en het grote aantal systemen en gebruikers.
+
+\subsection{Conclusie} 
+Deze casestudie toont aan dat het beveiligen van privileged access binnen een complexe en internationale IT-omgeving aanzienlijke uitdagingen met zich meebrengt. De overgang van directe toegang naar een gecentraliseerde PAM-oplossing zoals CyberArk is noodzakelijk om controle, traceerbaarheid en compliance te garanderen.
+
+Daarnaast bevestigt deze operationele case de strategische keuzes die binnen de eerste casestudie werden besproken. Functionaliteiten zoals credential vaulting, password rotation, Just-in-Time toegang, auditing en gecentraliseerde governance blijken niet louter theoretische enterprise-capabilities te zijn, maar vormen concrete vereisten binnen dagelijkse beheeractiviteiten van kritieke infrastructuur.
+
+De casestudie benadrukt tenslotte dat een PAM-oplossing niet alleen veilig moet zijn, maar ook moet aansluiten bij de operationele noden van beheerders. Dit vormt de basis voor de verdere vergelijkende analyse van verschillende PAM-oplossingen binnen deze bachelorproef.
+

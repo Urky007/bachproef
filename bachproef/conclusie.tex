@@ -14,5 +14,43 @@
 % Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder 
 %onderzoek?
 
-\lipsum[76-80]
+\section{Inleiding}
+Deze bachelorproef had als doel om de rol en meerwaarde van Privileged Access Management te analyseren, zowel vanuit een theoretisch als praktisch perspectief. Enerzijds werd via een literatuurstudie onderzocht waarom PAM een cruciaal onderdeel vormt binnen moderne cybersecuritystrategieën en hoe het zich verhoudt tot regelgeving en best practices. Anderzijds werd via een proof-of-concept nagegaan hoe PAM oplossingen functioneren in een concrete implementatie.
+
+Daarnaast bood de casestudie binnen Ahold Delhaize een realistische context waarin de uitdagingen rond privileged access duidelijk naar voren kwamen. De combinatie van deze drie invalshoeken zorgt voor een onderbouwde en praktijkgerichte evaluatie van PAM. Hierbij werd niet enkel gekeken naar technische functionaliteiten, maar ook naar governance, operationele impact, automatisatie en gebruikservaring binnen enterprise-omgevingen.
+\section{Beantwoording van de onderzoeksvraag}
+Uit de literatuurstudie blijkt dat privileged accounts een aanzienlijk beveiligingsrisico vormen en dat controle, monitoring en beperking ervan essentieel zijn. PAM oplossingen bieden hiervoor een centrale aanpak door credentials te beveiligen, toegang te beperken en gebruikersactiviteiten te registreren.
+
+De casestudie bevestigt deze theoretische noodzaak. In de beschreven omgeving werd toegang tot kritieke storage- en netwerksystemen oorspronkelijk gerealiseerd via directe verbindingen en gedeelde accounts, wat leidde tot beperkte controle en traceerbaarheid. Dit sluit nauw aan bij de risico’s die in de literatuur worden aangehaald. De beslissing om PAM te implementeren kwam dan ook voort uit concrete beveiligingsproblemen en compliancevereisten. Daarnaast bleek uit de strategische casestudie dat PAM binnen enterprise-omgevingen steeds vaker beschouwd wordt als een platform voor governance, auditing en gecontroleerde privilege-elevatie, en niet uitsluitend als een oplossing voor password management.
+
+De resultaten van de proof-of-concept tonen vervolgens aan hoe deze theoretische principes in de praktijk kunnen worden toegepast. Zowel PAM360 als Securden maken het mogelijk om toegang te centraliseren, credentials af te schermen en sessies te loggen. Hierdoor wordt het risico op misbruik aanzienlijk verminderd en wordt traceerbaarheid verbeterd.
+
+Tegelijkertijd blijkt uit zowel de casestudie als de POC dat de effectiviteit van PAM sterk afhankelijk is van de implementatie. Factoren zoals correcte configuratie, integratie met Active Directory en het definiëren van rollen en policies zijn cruciaal. In de casestudie werd bijvoorbeeld gewerkt met Non-Personal Accounts en een duidelijke scheiding van accounttypes, wat aantoont dat organisatorische keuzes even belangrijk zijn als de tool zelf. Ook aspecten zoals onboarding, gebruikservaring, automatisatie en schaalbaarheid bleken een belangrijke invloed te hebben op de effectiviteit en adoptie van een PAM-oplossing.
+
+Samengevat kan gesteld worden dat PAM een essentiële bouwsteen is binnen moderne cybersecurity, maar dat de meerwaarde pas volledig gerealiseerd wordt wanneer zowel de technische implementatie als de organisatorische inrichting correct gebeuren.
+\section{Praktische aanbevelingen}
+Op basis van de literatuurstudie, de casestudie en de proof-of-concept kunnen enkele concrete aanbevelingen worden geformuleerd.
+
+Een eerste belangrijke vaststelling is dat een PAM implementatie niet los kan gezien worden van de bestaande IT-structuur. De casestudie toont aan dat een duidelijke rolverdeling, het gebruik van gestandaardiseerde accounts (zoals NPA’s) en een goed gestructureerde Active Directory essentieel zijn om PAM correct te laten functioneren.
+
+Daarnaast is een gefaseerde aanpak aanbevolen. In de praktijkomgeving werd gewerkt met verschillende types accounts en systemen, wat aantoont dat een stapsgewijze onboarding noodzakelijk is om complexiteit beheersbaar te houden. Dit sluit ook aan bij de bevindingen uit de proof-of-concept, waar configuratie en integratie een belangrijke impact hadden op de werking van de oplossingen.
+
+Verder blijkt dat organisaties een duidelijke keuze moeten maken tussen eenvoud en functionaliteit. De casestudie beschrijft een complexe enterprise-omgeving, waarvoor een meer geavanceerde oplossing aangewezen is. De proof-of-concept toont echter aan dat eenvoudigere tools sneller inzetbaar zijn, maar minder flexibiliteit bieden. De keuze voor een PAM oplossing moet dus afgestemd worden op de schaal en maturiteit van de organisatie. Hierbij tonen de casestudies aan dat grotere enterprise-omgevingen doorgaans meer nood hebben aan uitgebreide governance-, auditing- en automatisatiefunctionaliteiten, terwijl kleinere omgevingen vaker prioriteit geven aan eenvoud en snelle implementatie.
+
+Tot slot moet PAM geïntegreerd worden in een bredere securitystrategie. De casestudie benadrukt onder meer de nood aan logging, auditing en gecontroleerde toegang, wat enkel effectief is wanneer PAM gecombineerd wordt met andere maatregelen zoals monitoring, netwerksegmentatie en identity management.
+\section{Beperkingen van het onderzoek}
+Hoewel deze bachelorproef waardevolle inzichten biedt, zijn er enkele beperkingen. De proof-of-concept werd uitgevoerd in een testomgeving, waardoor niet alle realistische scenario’s konden worden geëvalueerd.
+
+Daarnaast focust de casestudie op één specifieke organisatie en use case, namelijk storage- en SAN-beheer. Hoewel deze context representatief is voor veel enterprise-omgevingen, kunnen de resultaten niet zonder meer veralgemeend worden naar alle sectoren.
+
+Ook de vergelijking binnen de proof-of-concept is beperkt tot twee oplossingen, wat betekent dat andere tools mogelijk andere resultaten zouden opleveren.
+
+\section{Suggesties voor verder onderzoek}
+Verder onderzoek kan zich richten op het evalueren van PAM oplossingen in productieomgevingen, waarbij ook de impact op performantie en schaalbaarheid wordt meegenomen.
+
+Daarnaast kan het interessant zijn om meerdere casestudies te analyseren, zodat verschillen tussen sectoren en infrastructuren beter in kaart gebracht kunnen worden. Dit zou toelaten om de bevindingen uit deze studie verder te generaliseren.
+
+Ook de combinatie van PAM met bredere securityconcepten, zoals Zero Trust en Identity & Access Management, vormt een interessante piste voor toekomstig onderzoek. Hierbij kan onderzocht worden hoe deze technologieën elkaar versterken in realistische bedrijfsomgevingen.
+
+Verder onderzoek kan eveneens focussen op de manier waarop organisaties PAM-capabilities prioriteren binnen verschillende maturiteitsniveaus en sectoren, en hoe factoren zoals governance, gebruikservaring en automatisatie de adoptie van PAM-oplossingen beïnvloeden.
 

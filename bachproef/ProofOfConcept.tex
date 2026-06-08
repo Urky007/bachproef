@@ -1,0 +1,450 @@
+\chapter{Proof of concept}
+\label{ch:proof-of-concept}
+\section{Inleiding}
+Na de theoretische vergelijking wordt in dit hoofdstuk een praktische evaluatie uitgevoerd in de vorm van een proof of concept. Hierbij worden twee PAM oplossingen geïmplementeerd in een gecontroleerde testomgeving om na te gaan hoe zij in de praktijk beheertoegang via SSH en RDP beveiligen. De opzet van deze proof of concept werd mede geïnspireerd door de casestudies binnen Ahold Delhaize, waarbij gecontroleerde privileged toegang, netwerksegmentatie, auditing en governance centraal stonden binnen de PAM-strategie.
+\section{Testomgeving}
+\subsection{Fysieke installatie POC}
+Voor deze bachelorproef werd een eigen labo-omgeving opgebouwd waarin een realistische bedrijfsinfrastructuur werd nagebootst. De fysieke installatie bestaat uit een internetverbinding die via een edge-router binnenkomt, gevolgd door een interne router die het verkeer verder verdeelt naar de switchinglaag. Deze switchinglaag bestaat uit twee switches die onderling verbonden zijn via trunkpoorten, zodat VLAN-verkeer correct kan worden doorgestuurd.
+Op deze switches is een virtualisatiehost (Proxmox) aangesloten. Deze host vormt het hart van de testomgeving en draait meerdere virtuele machines die gebruikt worden voor het testen van de PAM oplossingen. 
+Door gebruik te maken van trunking tussen de switches en richting de router, kan het netwerkverkeer van verschillende VLAN’s over dezelfde fysieke verbinding verlopen zonder dat de logische scheiding verloren gaat. 
+\subsection{Architectuurschema}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Architectuurschema.png}
+	\caption[Het Architectuurschema van de proof of concept.]{\label{fig:Architectuurschema}Het Architectuurschema van de proof of concept.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\textwidth]{rackViewFront.png}
+	\caption[Vooraanzicht van de rack.]{\label{fig:rackViewFront}Vooraanzicht van de rack.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\textwidth]{rackViewBack.png}
+	\caption[Achteraanzicht van de rack.]{\label{fig:rackViewBack}Achteraanzicht van de rack.}
+\end{figure}
+
+\paragraph{Netwerksegmentatie}
+Een belangrijk ontwerpprincipe binnen deze opstelling is de volledige segmentatie van het netwerk. In plaats van één vlak netwerk werd gekozen voor meerdere VLAN’s, elk met een duidelijk afgebakende functie:
+\begin{itemize}
+	\item VLAN10 – Management (192.168.10.0/24)
+	Dit netwerk wordt gebruikt voor het beheer van netwerktoestellen en servers. Enkel beheerders hebben hier toegang toe. 
+	\item VLAN20 – Servers (192.168.20.0/24)
+	Hier bevinden zich de kritieke systemen zoals domeincontrollers en applicatieservers. 
+	\item VLAN25 – PAM (192.168.25.0/24)
+	Dit segment is exclusief voorzien voor de PAM oplossing, zodat privileged access centraal en gecontroleerd verloopt. 
+	\item VLAN30 – Users (192.168.30.0/24)
+	Dit netwerk bevat de eindgebruikers en hun systemen. 
+	\item VLAN40 – Lab (192.168.40.0/24)
+	Een testomgeving waarin experimenten kunnen worden uitgevoerd zonder impact op andere segmenten. 
+	\item VLAN50 – DMZ (192.168.50.0/24)
+	Dit segment bevat publiek toegankelijke diensten, zoals een webserver. 
+	
+\end{itemize}
+Door deze segmentatie wordt verkeer logisch gescheiden, ook al maakt het gebruik van dezelfde fysieke infrastructuur. Systemen binnen één VLAN kunnen niet zomaar communiceren met systemen in een ander VLAN zonder tussenkomst van routing en firewallregels. Hierdoor wordt laterale beweging binnen het netwerk sterk beperkt en wordt de algemene beveiliging aanzienlijk verhoogd. Deze gesegmenteerde aanpak sluit aan bij moderne enterprise-architecturen waarin privileged access strikt gecontroleerd wordt en laterale beweging binnen het netwerk zoveel mogelijk beperkt wordt.
+\paragraph{Integratie van de virtualisatieomgeving}
+De Proxmox-server werd geïntegreerd in het netwerk via een trunkpoort, waardoor meerdere VLAN’s beschikbaar zijn op één fysieke netwerkinterface. Binnen Proxmox kunnen virtuele machines toegewezen worden aan specifieke VLAN’s, afhankelijk van hun rol binnen de infrastructuur.
+
+Deze aanpak maakt het mogelijk om met beperkte hardware toch een complexe en gesegmenteerde omgeving op te bouwen. Tegelijk biedt het de flexibiliteit om snel nieuwe systemen toe te voegen of bestaande configuraties aan te passen, wat essentieel was voor het uitvoeren van de testen binnen deze bachelorproef.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{proxmox.png}
+	\caption[Een overzicht van alle vm's in proxmox.]{\label{fig:proxmox}Een overzicht van alle vm's in proxmox.}
+\end{figure}
+
+
+
+\section{POC1- ManageEngine PAM360}
+\subsection{Installatie van PAM360}
+Voor de proof of concept (POC) werd gebruikgemaakt van de trialversie van ManageEngine PAM360. Deze versie kan vrij gedownload worden en is gedurende 30 dagen volledig functioneel, waardoor alle features zonder beperkingen getest kunnen worden. Tijdens deze evaluatieperiode ondersteunt de software tot vijf administratoraccounts.
+
+Na het verstrijken van deze 30 dagen wordt de trial automatisch omgezet naar een permanente gratis versie. Deze free edition blijft onbeperkt bruikbaar, maar bevat enkele beperkingen: er kan slechts één administratoraccount gebruikt worden en het aantal te beheren resources is beperkt tot tien systemen.
+
+De installatie van PAM360 verliep relatief snel en vlot, aangezien de basisinfrastructuur voor de POC reeds vooraf was opgezet. Deze infrastructuur simuleerde een realistische bedrijfsomgeving en omvatte onder andere een domeincontroller met Active Directory, meerdere gesegmenteerde netwerken (VLAN’s), een Linux webserver en verschillende Windows clients.
+
+De PAM360-server werd geïnstalleerd op een aparte virtuele machine binnen het managementnetwerk. Tijdens de installatie werden de standaardinstellingen grotendeels behouden, waarbij enkel de noodzakelijke netwerkconfiguraties en poorten werden gecontroleerd om correcte communicatie met andere systemen te garanderen.
+
+Om eventuele connectiviteitsproblemen tijdens de testfase te vermijden, werden de lokale firewalls op de virtuele machines tijdelijk uitgeschakeld. De beveiliging werd in deze fase voornamelijk op netwerkniveau afgedwongen via de bestaande segmentatie en firewallregels in de infrastructuur. Dit maakte het mogelijk om de functionaliteiten van PAM360, zoals sessiebeheer, credential injection en Just-In-Time toegang, zonder verstoringen te testen.
+
+Na de installatie werd de webinterface van PAM360 benaderd via HTTPS (standaard poort 8282), waarna de initiële configuratie kon starten. Dit omvatte onder andere het instellen van administratoraccounts, het koppelen van de Active Directory en het voorbereiden van de omgeving voor verdere onboarding van systemen en gebruikers.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360Inlog.jpg}
+	\caption[PAM360 Inlogscherm.]{\label{fig:PAM360Inlogscherm}PAM360 Inlogscherm}
+\end{figure}
+
+\subsection{Integratie van Active Directory gebruikers}
+Na de initiële installatie van PAM360 werd de volgende stap uitgevoerd: het integreren van gebruikers uit de bestaande Active Directory-omgeving. Dit was noodzakelijk om centrale authenticatie mogelijk te maken en om gebruikersrechten binnen PAM360 te kunnen beheren op basis van domeinaccounts.
+
+De koppeling met de Active Directory verliep via de ingebouwde directory-integratie van PAM360. Hierbij werd het domein toegevoegd door de juiste domeincontroller, LDAP-instellingen en authenticatiegegevens te configureren. Na een succesvolle connectie werd gebruikgemaakt van de importfunctionaliteit om gebruikers en organizational units (OU’s) uit de directory in te laden.
+
+Hoewel de synchronisatie op technisch vlak succesvol leek, traden er bij het testen van de gebruikersaccounts verschillende problemen op. Gebruikers konden zich niet aanmelden via de PAM360 webinterface, ondanks dat ze correct geïmporteerd waren en zichtbaar waren in de gebruikerslijst.
+
+Na analyse bleek dat dit probleem niet veroorzaakt werd door de PAM oplossing zelf, maar door instellingen binnen de Active Directory. Meer specifiek hadden verschillende testaccounts de optie “User must change password at next logon” actief staan. Hierdoor werden deze accounts als ongeldig beschouwd voor authenticatie via PAM360, aangezien de applicatie geen interactieve wachtwoordwijziging kan afdwingen tijdens het inloggen.
+
+Dit resulteerde in foutieve of geweigerde loginpogingen, zonder dat dit onmiddellijk duidelijk was vanuit de foutmeldingen in PAM360. Pas na het uitschakelen van deze optie, of door handmatig een nieuw wachtwoord toe te kennen aan de betrokken gebruikers, konden zij succesvol aanmelden via de PAM oplossing.
+
+Een bijkomend belangrijk voordeel van de integratie met Active Directory is de mogelijkheid binnen PAM360 om scheduled scans uit te voeren op de directory. Hierbij wordt op regelmatige tijdstippen automatisch gecontroleerd of er nieuwe gebruikers zijn toegevoegd in de Active Directory. Deze gebruikers kunnen vervolgens automatisch gesynchroniseerd worden naar PAM360, zonder dat manuele interventie vereist is.
+
+Dit zorgt ervoor dat het gebruikersbeheer centraal in Active Directory kan blijven gebeuren, wat de administratieve last aanzienlijk vermindert. Nieuwe gebruikers moeten hierdoor enkel in de directory aangemaakt worden en niet afzonderlijk in PAM360.
+Het is echter belangrijk om te vermelden dat deze automatische synchronisatie enkel betrekking heeft op de gebruikersaccounts zelf. De koppeling van deze gebruikers aan specifieke systemen of resources (zoals servers, netwerktoestellen of applicaties) gebeurt nog steeds binnen PAM360. Deze configuratie wordt verder uitgewerkt in het volgende hoofdstuk.
+
+Deze fase van de implementatie toonde aan dat een correcte configuratie van de onderliggende directory-omgeving cruciaal is voor een vlotte integratie met een PAM oplossing. Kleine instellingen binnen Active Directory, zoals wachtwoordbeleid en accountstatus, kunnen een directe impact hebben op de werking van externe authenticatiesystemen zoals PAM360.
+
+Hiervoor maakte ik in ad verschillende users aan. Deze liet ik door PAM360 implementeren volgens de richtlijnen van https://www.manageengine.com/privileged-access-management/help/installation.html
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360ADUsers.jpg}
+	\caption[PAM360 AD Users.]{\label{fig:PAM360ADUsers}PAM360 AD Users}
+\end{figure}
+\subsection{Importeren van resources}
+Na de integratie van de gebruikers uit Active Directory werd de volgende stap in de POC uitgevoerd: het toevoegen van de te beheren systemen, ook wel “resources” genoemd, binnen PAM360. Deze resources vormen de doelwitten waarop privileged access wordt toegepast, zoals servers, netwerktoestellen en andere endpoints.
+
+Het importeren van deze resources gebeurde op twee verschillende manieren: enerzijds manueel en anderzijds via automatische discovery.
+Bij de manuele methode werden systemen één voor één toegevoegd door hun IP-adres of hostname op te geven, samen met het type resource (bijvoorbeeld Windows, Linux of netwerkdevice) en de bijhorende authenticatiegegevens. Deze aanpak werd voornamelijk gebruikt voor initiële testen en om een beter inzicht te krijgen in de configuratiemogelijkheden binnen PAM360. Het manueel toevoegen laat toe om zeer gericht te werken en specifieke instellingen per systeem onmiddellijk correct te definiëren.
+
+Naast deze methode werd ook gebruikgemaakt van de automatische discovery-functionaliteit van PAM360. Hierbij werd een scan uitgevoerd op de vooraf gedefinieerde netwerken en IP-ranges binnen de POC-omgeving. Deze scan detecteerde automatisch actieve systemen en identificeerde hun type op basis van beschikbare services en protocollen.
+
+De resultaten van deze discovery waren uitgebreid: niet alleen de voorziene servers werden gevonden, maar ook Windows clients, Linux systemen, netwerktoestellen (zoals routers en switches) en de domain controller. Dit bevestigde dat de tool in staat is om een volledig overzicht te verkrijgen van alle relevante assets binnen het netwerk.
+
+Na de detectie konden de gevonden systemen eenvoudig geïmporteerd worden in PAM360. Vervolgens werd per resource bepaald welke accounts beheerd moesten worden en op welke manier toegang verleend zou worden aan gebruikers. Hierbij werd ook rekening gehouden met het type systeem en de vereiste protocollen, zoals RDP voor Windows en SSH voor Linux en netwerkapparatuur.
+
+De combinatie van manuele import en automatische discovery bleek bijzonder efficiënt binnen de POC. Waar manuele toevoeging meer controle en precisie biedt, zorgt automatische discovery voor snelheid en volledigheid. Samen maken deze methodes het mogelijk om zowel kleine als grotere omgevingen op een gestructureerde manier te onboarden in een PAM oplossing.
+
+In het volgende hoofdstuk wordt verder ingegaan op het koppelen van gebruikers aan deze resources en het configureren van toegangscontrole, waaronder JIT toegang.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360Resources.jpg}
+	\caption[PAM360 Resources.]{\label{fig:PAM360Resources}PAM360 Resources}
+\end{figure}
+\subsection{Just-In-Time (JIT) toegang en privilegebeheer}
+Na het importeren van de resources werd binnen  PAM360 de focus gelegd op het configureren van toegangscontrole. Een van de belangrijkste functionaliteiten hierbij is JIT access, waarbij gebruikers enkel tijdelijke en gecontroleerde toegang krijgen tot systemen en rechten, in plaats van permanente privileges.
+Binnen PAM360 bestaan er verschillende vormen van JIT, die elk inspelen op een specifiek beveiligingsscenario.
+
+\paragraph{Just-In-Time access (tijdelijke toegang tot systemen)}
+De eerste en meest gebruikte vorm is JIT access tot een resource. Hierbij krijgt een gebruiker niet standaard toegang tot een server, maar moet deze expliciet toegang aanvragen wanneer nodig.
+
+De werking binnen de POC was als volgt:
+\begin{itemize}
+	\item De gebruiker selecteert een resource binnen PAM360 
+	\item Vervolgens vraagt hij toegang aan voor een bepaalde tijdsduur
+	\item Als administrator ontvang je hiervan een notificatie (bijvoorbeeld via e-mail) 
+	\item Na goedkeuring krijgt de gebruiker tijdelijk toegang tot het systeem 
+	\item Na het verstrijken van de tijd wordt de toegang automatisch ingetrokken 
+\end{itemize}
+Tijdens de testen werd dit proces gevalideerd. Wanneer een gebruiker toegang aanvroeg, ontving de administrator effectief een e-mail met de aanvraag (zie afbeelding \ref{fig:PAM360JIT1}). Vanuit deze notificatie kon de aanvraag beoordeeld en goedgekeurd worden. Dit bevestigde dat de approval workflow correct functioneerde.
+
+Daarnaast was in de PAM360 interface duidelijk zichtbaar welke aanvragen lopende waren en welke reeds goedgekeurd of geweigerd waren (zie afbeelding \ref{fig:PAM360JIT2}). Dit zorgt voor een centrale en overzichtelijke manier van toegangsbeheer.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360JIT1.jpg}
+	\caption[Dit ziet een gebruiker wanneer hij verbinding wilt maken tot een resource.]{\label{fig:PAM360JIT1}Dit ziet een gebruiker wanneer hij verbinding wilt maken tot een resource}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360JIT2.jpg}
+	\caption[Een gebruiker kan toegang aanvragen. Deze aanvraag beland bij een administrator.]{\label{fig:PAM360JIT2}Een gebruiker kan toegang aanvragen. Deze aanvraag beland bij een administrator.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360JIT3.jpg}
+	\caption[De administrator krijgt een notificatie via mail.]{\label{fig:PAM360JIT3}De administrator krijgt een notificatie via mail.}
+\end{figure}
+\paragraph{Just-In-Time elevation (tijdelijke adminrechten)}
+Een tweede belangrijke functionaliteit is Just-In-Time elevation. Hierbij heeft een gebruiker reeds toegang tot een systeem, maar beschikt hij niet standaard over administratorrechten.
+
+Binnen de POC werd vastgesteld dat een gebruiker tijdelijk verhoogde rechten kan verkrijgen wanneer nodig, bijvoorbeeld voor installatie- of configuratietaken. Deze rechten:
+\begin{itemize}
+	\item worden toegekend voor een beperkte tijd 
+	\item kunnen onderworpen worden aan een goedkeuringsproces 
+	\item worden automatisch ingetrokken na afloop 
+\end{itemize}
+Ook deze acties worden gelogd binnen PAM360, wat auditing en compliance vereenvoudigt.
+\paragraph{Applicatie-specifieke privilege toekenning}
+Een derde en zeer krachtige mogelijkheid is het toekennen van rechten op applicatieniveau. Hierbij wordt een gebruiker geen volledige administratorrechten op een server gegeven, maar enkel de mogelijkheid om een specifieke applicatie met verhoogde rechten uit te voeren.
+
+Binnen de POC werd dit beschouwd als een belangrijk beveiligingsmechanisme, omdat:
+\begin{itemize}
+	\item het risico op misbruik van adminrechten drastisch vermindert 
+	\item gebruikers enkel toegang krijgen tot wat strikt noodzakelijk is 
+	\item kritische systemen beter beschermd blijven 
+\end{itemize}
+Dit sluit perfect aan bij het principe van least privilege, dat ook in de theoretische studie sterk naar voren kwam.
+\paragraph{Vergelijking met CyberArk en BeyondTrust}
+Tijdens de voorbereidende studie werden ook CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management geanalyseerd als toonaangevende oplossingen binnen het PAM domein.
+
+Volgens deze studie bieden beide oplossingen zeer uitgebreide mogelijkheden op vlak van Just-In-Time access, privilege elevation en applicatiecontrole. Daarbij wordt vaak verwezen naar een grotere diepgang in functionaliteiten, zoals geavanceerde workflows, uitgebreide auditing, integraties met andere securitytools (bijvoorbeeld SIEM) en ondersteuning voor complexe enterprise-omgevingen.
+
+Het is echter belangrijk te vermelden dat deze vaststellingen gebaseerd zijn op theoretische analyse en documentatie. Binnen deze POC werden deze oplossingen niet praktisch geïmplementeerd of getest. Hierdoor kan er geen directe vergelijking gemaakt worden op basis van hands-on ervaring.
+
+Wat wel vastgesteld kon worden, is dat PAM360 de kernprincipes van Just-In-Time access en least privilege volledig ondersteunt. Functionaliteiten zoals tijdelijke toegang, approval workflows en privilege elevation zijn effectief getest en werkten zoals verwacht binnen de POC-omgeving.
+
+Op basis van de studie kan dus gesteld worden dat oplossingen zoals CyberArk en BeyondTrust mogelijk een grotere functionele diepgang bieden, maar dat PAM360 de essentiële PAM concepten correct implementeert en praktisch toepasbaar maakt binnen een test- en middelgrote omgeving.
+
+\subsection{Session logging en session recording}
+Een essentieel onderdeel binnen PAM360 is het monitoren en registreren van gebruikerssessies. Dit omvat zowel session logging, waarbij alle gebeurtenissen worden bijgehouden, als session recording, waarbij sessies effectief worden opgenomen. Deze functionaliteiten spelen een cruciale rol in auditing, compliance en het detecteren van mogelijk misbruik van privileged accounts.
+
+Tijdens de POC werd deze functionaliteit meermaals getest door sessies op te zetten naar verschillende systemen binnen de omgeving. Eén van deze testen bestond uit een verbinding naar een Linux server via PAM360. De gebruiker maakte telkens verbinding via de webinterface, waarbij de authenticatie automatisch werd afgehandeld zonder dat het wachtwoord zichtbaar was. Dit bevestigde dat credential injection correct functioneerde.
+
+Na het beëindigen van de sessies konden deze onmiddellijk teruggevonden worden binnen de auditmodule. Zoals zichtbaar in de auditinterface (zie figuur \ref{fig:PAM360Recording1}), biedt PAM360 een duidelijk overzicht van alle uitgevoerde sessies. Hierin worden onder andere de betrokken resource, het gebruikte account, de uitvoerende gebruiker, het IP-adres en het tijdstip van de sessie weergegeven. Ook de status van de verbinding wordt bijgehouden. Dit zorgt voor een transparante en gestructureerde weergave van alle toegangen tot kritische systemen.
+
+Naast deze loggingfunctionaliteit werd ook bevestigd dat de sessies automatisch worden opgenomen. De uitgevoerde sessies – waaronder die naar de Linux server – konden achteraf volledig worden herbekeken. Hierbij werd zichtbaar welke acties en commando’s uitgevoerd werden tijdens de sessies. Deze opnamefunctionaliteit was standaard actief en vereiste geen bijkomende configuratie, wat de implementatie aanzienlijk vereenvoudigde.
+
+De combinatie van logging en recording zorgt voor een uitgebreide audittrail. Niet alleen wordt geregistreerd wanneer een gebruiker toegang heeft gehad tot een systeem, maar ook wat er exact binnen die sessie gebeurd is. Dit maakt het mogelijk om incidenten grondig te analyseren en verantwoordelijkheden correct toe te wijzen. Daarnaast draagt deze functionaliteit bij aan het voldoen aan compliancevereisten, aangezien alle acties traceerbaar zijn.
+
+Verder biedt PAM360 de mogelijkheid om deze logs door te sturen naar externe SIEM-oplossingen. In de configuratie (zie figuur \ref{fig:PAM360Siem}) is zichtbaar dat integraties mogelijk zijn met onder andere Splunk en Microsoft Sentinel. Hierdoor kunnen logs centraal verzameld en gecorreleerd worden met andere security-events binnen de organisatie, wat de detectie van afwijkend gedrag versterkt.
+
+Wanneer deze functionaliteit vergeleken wordt met de mogelijkheden die volgens de studie aangeboden worden door CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management, blijkt dat PAM360 op dit vlak iets minder diepgaand is. Volgens de studie beschikken deze oplossingen over meer geavanceerde mogelijkheden op het gebied van session monitoring, zoals uitgebreidere analysetools, meer gedetailleerde opnamefunctionaliteiten en sterkere integraties met security-ecosystemen.
+
+Opnieuw is het belangrijk om hier aan te kaarten dat de vergelijking met CyberArk en BeyondThrust enkel gebaseerd is op de literatuur en niet in werkelijkheid is uitgevoerd.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360Recording1.jpg}
+	\caption[De administrator ziet de recordings van verlopen sessies]{\label{fig:PAM360Recording1}De administrator ziet de recordings van verlopen sessies}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth]{PAM360Siem.jpg}
+	\caption[Een overzicht van SIEM applicaties die  geïntegreerd kunnen worden.]{\label{fig:PAM360Siem}Een overzicht van SIEM applicaties die  geïntegreerd kunnen worden.}
+\end{figure}
+\subsection{Credential vaulting}
+Een kernfunctionaliteit binnen PAM360 is het veilig beheren en opslaan van credentials, ook wel bekend als credential vaulting. Dit houdt in dat gevoelige gegevens zoals wachtwoorden, SSH-keys en andere authenticatie-informatie centraal worden beheerd binnen de PAM oplossing, in plaats van verspreid over systemen of gekend door eindgebruikers.
+
+Binnen de POC werd vastgesteld dat PAM360 deze credentials opslaat in een geïntegreerde vault binnen de applicatie zelf. In tegenstelling tot sommige andere PAM oplossingen wordt er hierbij geen gebruik gemaakt van een afzonderlijke, dedicated vault-server. De opslag van credentials gebeurt dus rechtstreeks binnen de PAM360-instance.
+
+Dit heeft zowel voordelen als aandachtspunten. Enerzijds vereenvoudigt deze aanpak de implementatie aanzienlijk, aangezien er geen bijkomende infrastructuur nodig is voor het beheren van een aparte vault. Dit maakt de oplossing sneller inzetbaar en eenvoudiger te beheren, zeker binnen kleinere omgevingen of POC-scenario’s. Anderzijds betekent dit ook dat de scheiding tussen applicatielaag en opslaglaag minder strikt is, wat vanuit een security-architectuurstandpunt als een beperking kan worden beschouwd.
+
+Tijdens het gebruik van PAM360 werd duidelijk dat gebruikers geen directe toegang hebben tot de opgeslagen credentials. Wanneer een gebruiker een sessie start naar een resource, worden de benodigde credentials automatisch geïnjecteerd door de applicatie. Dit principe, bekend als credential injection, zorgt ervoor dat wachtwoorden niet zichtbaar zijn voor de eindgebruiker en dus niet kunnen worden misbruikt of gedeeld.
+
+Daarnaast werd binnen de POC ook de functionaliteit rond password rotation effectief getest. Hierbij werd vastgesteld dat wachtwoorden automatisch gewijzigd werden telkens wanneer een tijdelijke gebruiker toegang aanvroeg tot een systeem via een JIT aanvraag. Concreet betekende dit dat na het beëindigen van een sessie en/of na het verlopen van de toegekende toegang, het bijhorende wachtwoord automatisch werd aangepast. Dit verhoogt de veiligheid aanzienlijk, aangezien credentials slechts éénmalig gebruikt worden en nadien onmiddellijk ongeldig worden.
+
+Deze automatische rotatie sluit nauw aan bij het principe van “ephemeral access”, waarbij credentials slechts tijdelijk geldig zijn en continu vernieuwd worden. Hierdoor wordt het risico op hergebruik of compromittering van wachtwoorden sterk gereduceerd.
+
+Wanneer deze aanpak vergeleken wordt met oplossingen zoals CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management, blijkt volgens de studie dat deze vaak werken met een meer gescheiden architectuur, waarbij de credential vault als een aparte, sterk beveiligde component wordt ingericht. Dit zou een hogere mate van isolatie en beveiliging kunnen bieden, evenals meer geavanceerde mogelijkheden rond lifecycle management van credentials.
+
+\subsection{Toegangscontrole en rollenbeheer}
+Binnen PAM360 vormt toegangscontrole een centrale pijler in het beheer van privileged access. Deze toegangscontrole wordt gerealiseerd door het toekennen van rollen en rechten aan gebruikers, waarbij bepaald wordt tot welke resources zij toegang hebben en onder welke voorwaarden.
+
+Tijdens de POC werd vastgesteld dat PAM360 werkt met vooraf gedefinieerde rollen, waarbij elke rol een specifieke set aan rechten en mogelijkheden bevat. In plaats van deze rollen afzonderlijk te beschrijven, geeft onderstaande afbeelding (zie figuur \ref{fig:RollenPAM360}) een duidelijk overzicht van de verschillende rollen en de bijhorende rechten binnen de applicatie.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{RollenPAM360.png}
+	\caption[Rollen PAM360.]{\label{fig:RollenPAM360}Rollen PAM360}
+\end{figure}
+Deze matrix toont op een gestructureerde manier welke acties toegestaan zijn per rol, zoals het beheren van gebruikers, het beheren van resources en accounts, het uitvoeren van audits, en toegang tot specifieke functionaliteiten zoals remote access en cloud-integraties. Hierdoor wordt snel duidelijk hoe de verantwoordelijkheden binnen de PAM oplossing verdeeld kunnen worden.
+
+Naast deze standaardrollen biedt PAM360 de mogelijkheid om custom rollen aan te maken. Hierbij kan zeer specifiek bepaald worden welke rechten een gebruiker krijgt binnen de applicatie en op welke resources deze van toepassing zijn. Dit laat toe om rollen volledig af te stemmen op de noden van de organisatie, in plaats van te moeten werken met generieke profielen.
+
+Een concreet voorbeeld uit de testomgeving is dat van een web developer. Deze gebruiker heeft nood aan permanente toegang tot de webserver waarop applicaties ontwikkeld en onderhouden worden. Binnen PAM360 kan dit eenvoudig geconfigureerd worden door deze resource rechtstreeks toe te wijzen aan de gebruiker of aan een rol waarvan de gebruiker deel uitmaakt.
+
+Voor andere, meer gevoelige systemen – zoals een sales server met bedrijfskritische data – werd een andere aanpak gehanteerd. In dit geval moest de gebruiker telkens een aanvraag indienen via het JIT mechanisme alvorens toegang te verkrijgen. Deze aanvraag werd vervolgens goedgekeurd door een administrator. Dit toont aan dat binnen éénzelfde gebruikersprofiel verschillende toegangsmodellen gecombineerd kunnen worden, afhankelijk van het risico en de gevoeligheid van de resource.
+
+Deze flexibiliteit in toegangscontrole brengt echter ook een belangrijk aandachtspunt met zich mee. Het correct beheren van rollen en rechten vereist een duidelijke en goed uitgewerkte governance-structuur. Zonder duidelijke afspraken bestaat het risico dat gebruikers te ruime rechten krijgen, dat uitzonderingen de standaard worden of dat toegangsbeheer inconsistent wordt toegepast.
+
+Daarom is het binnen een productieomgeving essentieel om vooraf te definiëren welke rollen bestaan, welke rechten hieraan gekoppeld zijn en wanneer gebruikgemaakt moet worden van tijdelijke toegang via JIT. Ook moet duidelijk bepaald worden wie verantwoordelijk is voor het goedkeuren van toegangsaanvragen.
+
+Wanneer dit vergeleken wordt met oplossingen zoals CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management, blijkt volgens de studie dat deze vaak nog verder gaan in het ondersteunen van uitgebreide governance-modellen en role-based access control. Toch kon binnen deze POC aangetoond worden dat PAM360 voldoende flexibiliteit biedt om zowel standaard- als maatwerkrollen te implementeren.
+
+\subsection{Gebruiksgemak en implementatiecomplexiteit}
+Binnen deze POC werd ook aandacht besteed aan het gebruiksgemak en de implementatiecomplexiteit van PAM360. Deze aspecten zijn van groot belang bij de evaluatie van een PAM oplossing, aangezien ze een directe impact hebben op de adoptie en het beheer binnen een organisatie.
+
+De installatie van PAM360 verliep in deze testomgeving relatief vlot en gestructureerd. De software beschikt over een duidelijke en goed gedocumenteerde installatiehandleiding, waardoor de basisopstelling snel gerealiseerd kon worden. In vergelijking met meer complexe enterprise-oplossingen bleek de initiële setup eerder “straightforward”, zonder dat er uitgebreide voorkennis of bijkomende componenten vereist waren.
+
+Een belangrijke factor die deze vlotte implementatie mogelijk maakte, is het feit dat de Active Directory-omgeving binnen de POC specifiek werd opgezet met het gebruik van PAM360 in gedachten. Hierdoor konden structuur, policies en gebruikersbeheer optimaal afgestemd worden op de noden van de PAM oplossing. Dit vereenvoudigde onder andere de integratie van gebruikers en het toekennen van rechten.
+
+Er kan echter verwacht worden dat de implementatie in een bestaande productieomgeving complexer zal zijn. Deze vaststelling sluit aan bij de casestudies binnen Ahold Delhaize, waar eveneens werd vastgesteld dat de integratie van PAM binnen bestaande enterprise-omgevingen sterk afhankelijk is van een duidelijke governance-structuur, gestandaardiseerde onboardingprocessen en een goed georganiseerde directory-omgeving. Wanneer een Active Directory reeds in gebruik is en niet ontworpen werd met PAM integratie in gedachten, kunnen er bijkomende uitdagingen ontstaan. Denk hierbij aan bestaande policies, inconsistenties in gebruikersbeheer of een gebrek aan duidelijke structuur in organizational units. Dit kan extra configuratie en afstemming vereisen om PAM360 correct te integreren.
+
+Op vlak van gebruikservaring werd PAM360 over het algemeen als gebruiksvriendelijk ervaren. Het opzetten van verbindingen naar systemen via RDP of SSH verliep snel en responsief. Dit draagt bij aan een efficiënte workflow voor eindgebruikers, aangezien er weinig vertraging is bij het starten van een sessie.
+
+Toch werden er tijdens het gebruik enkele aandachtspunten vastgesteld. Zo werd opgemerkt dat er geen duidelijke notificaties worden gegeven wanneer wachtwoorden vervallen zijn. Daarnaast verloopt de sessie van de webinterface zelf op de achtergrond, zonder expliciete waarschuwing naar de gebruiker. Wanneer de sessie vervalt door inactiviteit, lijkt de interface nog actief, maar is een refresh van de pagina nodig, waarna opnieuw moet worden ingelogd. Dit kan verwarrend zijn en de gebruikservaring negatief beïnvloeden.
+
+Wanneer dit aspect vergeleken wordt met oplossingen zoals CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management, wordt volgens de studie vaak verwezen naar een hogere complexiteit bij implementatie, maar ook naar meer uitgebreide en verfijnde functionaliteiten. Dit kan betekenen dat deze oplossingen meer configuratie vereisen, maar tegelijkertijd ook meer mogelijkheden bieden op vlak van schaalbaarheid en integratie.
+
+\subsection{Eindconclusie van de POC}
+
+Binnen deze proof of concept werd PAM360 geëvalueerd op basis van verschillende kerncriteria die essentieel zijn binnen een moderne Privileged Access Management oplossing. Hierbij werd gekeken naar installatie, integratie met Active Directory, onboarding van resources, JIT toegang, session logging en recording, credential vaulting, toegangscontrole en gebruiksgemak.
+
+De initiële installatie van PAM360 verliep vlot en gestructureerd. Dankzij de duidelijke documentatie en het ontbreken van complexe afhankelijkheden kon de oplossing snel operationeel gemaakt worden. De vooraf opgezette en goed gestructureerde Active Directory-omgeving speelde hierbij een belangrijke rol, aangezien deze afgestemd was op het gebruik van PAM. Dit maakte de integratie van gebruikers en het beheer van toegangsrechten eenvoudiger. Tegelijkertijd kan verwacht worden dat implementatie in een bestaande, minder gestructureerde omgeving complexer zal zijn.
+
+De integratie met Active Directory functioneerde zoals verwacht, al werd duidelijk dat correcte configuratie van gebruikersaccounts cruciaal is. Problemen zoals vervallen wachtwoorden of verplichte wachtwoordwijzigingen bij eerste login hadden een directe impact op de werking. De mogelijkheid tot automatische synchronisatie van gebruikers via scheduled scans biedt hier echter een duidelijke meerwaarde, doordat gebruikersbeheer centraal in de directory kan blijven gebeuren.
+
+Op vlak van resource onboarding bleek de combinatie van manuele configuratie en automatische discovery bijzonder efficiënt. De oplossing was in staat om niet alleen servers, maar ook clients, netwerktoestellen en de domain controller te detecteren en te beheren. Dit bevestigt dat PAM360 geschikt is voor het opbouwen van een volledig overzicht van de IT-omgeving.
+
+De implementatie van Just-In-Time access vormde een van de sterkste onderdelen binnen de POC. Tijdelijke toegang, goedkeuringsflows en privilege elevation werkten zoals verwacht en sloten nauw aan bij het principe van least privilege. De mogelijkheid om rechten te beperken tot specifieke applicaties toont aan dat PAM360 ook fijnmazige controle ondersteunt.
+
+Session logging en recording boden een duidelijke meerwaarde op vlak van auditing. Alle sessies konden achteraf geanalyseerd worden, inclusief een volledige opname van uitgevoerde acties. In combinatie met de mogelijkheid om logs door te sturen naar SIEM-oplossingen zoals Splunk en Microsoft Sentinel, vormt dit een sterke basis voor monitoring en compliance.
+
+Ook credential vaulting werd correct geïmplementeerd. Credentials worden centraal beheerd en nooit zichtbaar gemaakt voor eindgebruikers dankzij credential injection. De automatische password rotation, die tijdens de POC getest werd en plaatsvond na gebruik van tijdelijke toegang, verhoogt de veiligheid aanzienlijk. Het ontbreken van een aparte vault-server maakt de oplossing eenvoudiger, maar kan vanuit architecturaal oogpunt als minder strikt gescheiden beschouwd worden.
+
+Op vlak van toegangscontrole biedt PAM360 zowel standaardrollen als de mogelijkheid tot het definiëren van custom rollen. Dit laat toe om zeer flexibel om te gaan met rechten en toegangsniveaus. Tegelijkertijd werd duidelijk dat deze flexibiliteit enkel effectief is wanneer deze ondersteund wordt door een duidelijke governance-structuur binnen de organisatie.
+
+Wat gebruiksgemak betreft, werd PAM360 als positief ervaren. De interface is overzichtelijk en het opzetten van sessies via RDP of SSH verloopt snel en responsief. Toch werden enkele beperkingen vastgesteld, zoals het ontbreken van duidelijke notificaties bij vervallen wachtwoorden en het onverwacht verlopen van websessies zonder waarschuwing.
+
+Wanneer deze bevindingen vergeleken worden met oplossingen zoals CyberArk Privileged Access Manager en BeyondTrust Privileged Access Management, kan op basis van de studie gesteld worden dat deze mogelijk meer diepgang en geavanceerde functionaliteiten bieden, vooral in grotere en complexere omgevingen. 
+
+De bevindingen binnen deze proof of concept sluiten bovendien aan bij de strategische prioriteiten die binnen de casestudies van Ahold Delhaize naar voren kwamen, waarbij gecontroleerde toegang, auditing, governance en operationele toepasbaarheid centraal stonden binnen de evaluatie van PAM-capabilities.
+\paragraph{Algemene beoordeling}
+
+Op basis van de uitgevoerde testen kan geconcludeerd worden dat PAM360 een solide en gebruiksvriendelijke PAM oplossing is die de belangrijkste functionaliteiten correct implementeert. De oplossing is bijzonder geschikt voor kleine tot middelgrote omgevingen of als instap in privileged access management.
+De sterktes van PAM360 liggen in:
+\begin{itemize}
+	\item de eenvoudige installatie en implementatie
+	\item de duidelijke integratie met Active Directory 
+	\item de efficiënte combinatie van JIT access en credential management 
+	\item de ingebouwde session logging en recording 
+\end{itemize}
+De belangrijkste aandachtspunten zijn:
+\begin{itemize}
+	\item de afhankelijkheid van een goed gestructureerde onderliggende omgeving 
+	\item beperkte gebruikersfeedback in bepaalde scenario’s 
+	\item een mogelijk minder diepgaande functionaliteit in vergelijking met enterprise-oplossingen 
+\end{itemize}
+\paragraph{Slotbeschouwing}
+Deze POC toont aan dat PAM360 in staat is om de kernprincipes van privileged access management – zoals least privilege, zero trust en gecontroleerde toegang – effectief te implementeren. Hoewel er verschillen bestaan met meer mature oplossingen op de markt, biedt PAM360 een evenwichtige combinatie van functionaliteit, gebruiksgemak en implementatiesnelheid.
+\section{POC2- Securden}
+\subsection{Installatie van Securden}
+Voor de proof of concept (POC) werd gebruikgemaakt van de trialversie van Securden Privileged Access Management. Deze versie kan vrij gedownload worden via de website van de vendor en biedt gedurende een beperkte periode toegang tot de volledige functionaliteit van de oplossing. Hierdoor is het mogelijk om alle kernfeatures, zoals credential vaulting, sessiebeheer en JIT toegang, grondig te testen binnen een gecontroleerde omgeving.
+
+In tegenstelling tot sommige andere PAM oplossingen, zoals CyberArk en BeyondTrust, maakt Securden geen onderscheid tussen een trial en een sterk beperkte free edition. De focus ligt eerder op een volledige evaluatie van het product gedurende de testperiode.
+
+Net zoals bij de implementatie van PAM360 werd gebruikgemaakt van de vooraf opgebouwde labomgeving die een realistische bedrijfsinfrastructuur simuleert.
+
+De Securden server werd geïnstalleerd op een aparte virtuele machine binnen het managementnetwerk, zodat deze centraal kon instaan voor het beheer van toegang tot alle systemen binnen de omgeving. De installatie zelf verliep via een klassieke Windows installer en kan als relatief eenvoudig en rechtlijnig worden beschouwd. Tijdens het installatieproces werden automatisch de belangrijkste componenten van de oplossing geïnstalleerd, waaronder de webapplicatie, de interne database en de noodzakelijke services voor communicatie en beheer. In tegenstelling tot meer complexe PAM oplossingen was er geen nood aan het afzonderlijk installeren of configureren van meerdere componenten in deze fase, wat de implementatie aanzienlijk vereenvoudigde.
+
+Tijdens de installatie werden enkele basisparameters gevraagd, zoals het installatiepad, de netwerkpoort voor HTTPS-toegang en het initiële administratoraccount. In de meeste gevallen konden de standaardinstellingen behouden blijven, wat vergelijkbaar is met de installatie van PAM360 waarbij eveneens slechts minimale aanpassingen vereist waren.
+
+Een belangrijk onderdeel binnen de architectuur van Securden is de Session Manager (SSM), die verantwoordelijk is voor het opzetten en beheren van sessies naar doelsystemen. Deze component zorgt onder andere voor credential injection, sessielogging en recording. Binnen deze POC werd de Session Manager op dezelfde server geïnstalleerd als de hoofdapplicatie, wat de opzet eenvoudig en overzichtelijk hield. In meer uitgebreide productieomgevingen kan deze component eventueel gescheiden worden om schaalbaarheid en beveiliging te verhogen.
+
+Na het afronden van de installatie werden de nodige services automatisch gestart en kon de applicatie benaderd worden via de webinterface over HTTPS. Via deze interface kon ingelogd worden met het eerder aangemaakte administratoraccount, waarna de verdere configuratie van de omgeving kon starten.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenInlog.jpg}
+	\caption[Login scherm van Securden.]{\label{fig:SecurdenInlog}Login scherm van Securden}
+\end{figure}
+
+\paragraph{Integratie van Active Directory gebruikers}
+Binnen Securden zijn er verschillende mogelijkheden om gebruikers te onboarden in de PAM oplossing. Gebruikers kunnen manueel aangemaakt worden, geïmporteerd worden via een bestand of geïntegreerd worden via directory services zoals Active Directory, Azure AD of LDAP. In deze POC werd gekozen voor integratie met Active Directory, aangezien dit de meest gangbare methode is binnen bedrijfsomgevingen.
+
+De integratie met Active Directory gebeurt via de ingebouwde importfunctionaliteit, waarbij Securden het domein scant en gebruikers en groepen beschikbaar maakt voor selectie. Hiervoor moet eerst een connectie worden opgezet met de domain controller via het IP-adres of FQDN, aangevuld met geldige credentials van een account met leesrechten binnen de directory. Na het opzetten van deze verbinding kunnen de gewenste gebruikers of groepen geïmporteerd worden en meteen gekoppeld worden aan een rol binnen Securden.
+
+Daarnaast ondersteunt Securden ook periodieke synchronisatie met Active Directory, waardoor nieuwe of gewijzigde gebruikers automatisch kunnen worden bijgewerkt binnen de PAM oplossing. Dit zorgt ervoor dat het gebruikersbeheer centraal binnen de directory kan blijven gebeuren.
+
+De praktische uitvoering van deze integratie verliep zeer gelijkaardig aan de implementatie binnen PAM360. Ook hier werd vastgesteld dat de koppeling technisch vlot tot stand kwam, maar dat de werking sterk afhankelijk is van de configuratie binnen Active Directory zelf. Tijdens het testen bleek opnieuw dat gebruikers met een vervallen wachtwoord of met de optie “user must change password at next logon” geen toegang kregen tot de PAM interface. Dit bevestigt dat dergelijke instellingen een directe impact hebben op externe authenticatie via PAM oplossingen.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenADUsers.jpg}
+	\caption[Geïmporteerde users vanuit de AD.]{\label{fig:SecurdenADUsers}Geïmporteerde users vanuit de AD.}
+\end{figure}
+\paragraph{Onboarding van resources}
+Na de integratie van de gebruikers uit Active Directory werd binnen de proof of concept de volgende stap uitgevoerd, namelijk het toevoegen van de te beheren systemen of “resources” binnen Securden. Deze resources vormen de doelwitten waarop privileged access wordt toegepast, zoals servers, clients en andere infrastructuurcomponenten.
+
+In tegenstelling tot PAM360 verloopt de onboarding van resources binnen Securden op een fundamenteel andere manier. Waar PAM360 uitgebreide mogelijkheden biedt voor automatische network discovery en scanning van IP-ranges, beschikt Securden niet over een gelijkaardige functionaliteit. Het automatisch detecteren van systemen binnen het netwerk is dus niet standaard voorzien, waardoor de beheerder zelf verantwoordelijk is voor het toevoegen van de gewenste resources.
+
+Binnen deze POC werden systemen voornamelijk toegevoegd via twee methodes. Enerzijds konden servers geïmporteerd worden via de integratie met Active Directory, waarbij domeingekende systemen beschikbaar werden gemaakt binnen de interface. Anderzijds was het mogelijk om resources manueel toe te voegen door hun IP-adres of hostname op te geven, samen met de relevante connectiegegevens. Deze aanpak biedt voldoende flexibiliteit, maar vereist meer manuele configuratie in vergelijking met oplossingen die automatische discovery ondersteunen.
+
+Een belangrijk verschil met PAM360 situeert zich in de manier waarop toegang tot deze resources wordt beheerd. Waar bij PAM360 toegang vaak rechtstreeks op resource-niveau wordt toegekend en gedeeld met gebruikers, hanteert Securden een meer account-gebaseerde benadering. Hierbij worden eerst accounts gekoppeld aan een resource, waarna gebruikers toegang krijgen tot deze accounts in plaats van tot het systeem zelf.
+
+Dit betekent concreet dat gebruikers geen directe toegang krijgen tot een server, maar eerder tot een specifieke account die toegang heeft tot die server. Deze aanpak sluit nauw aan bij het principe van credential vaulting, waarbij credentials centraal beheerd worden en nooit rechtstreeks zichtbaar zijn voor de eindgebruiker. Toegang wordt dus indirect verleend via gecontroleerde accounts, wat de veiligheid verhoogt maar tegelijk een andere manier van denken vereist bij het configureren van toegangsrechten.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenAccountSharing.jpg}
+	\caption[Een account is aangemaakt voor alle gebruikers die werken als PAM dev. Gedeeld met de users: user1 en user2.]{\label{fig:SecurdenAccountSharing}Een account is aangemaakt voor alle gebruikers die werken als PAM dev. Gedeeld met de users: user1 en user2.}
+\end{figure}
+
+\subsection{Just-In-Time toegang}
+
+Binnen moderne PAM oplossingen vormt JIT toegang een belangrijk mechanisme om het principe van least privilege te implementeren. Hierbij krijgen gebruikers enkel tijdelijke en gecontroleerde toegang tot systemen of accounts, waardoor permanente rechten vermeden worden.
+
+Tijdens de evaluatie van Securden binnen deze proof of concept werd vastgesteld dat de implementatie van JIT toegang minder expliciet en minder opgesplitst is dan bij PAM360. In PAM360 wordt een duidelijk onderscheid gemaakt tussen verschillende vormen van JIT, zoals access-based toegang, privilege elevation en applicatiegebonden toegang. Deze specifieke onderverdelingen werden binnen Securden niet in dezelfde vorm teruggevonden.
+
+Dit betekent echter niet dat Securden geen ondersteuning biedt voor JIT-principes. De oplossing implementeert toegangscontrole eerder via een combinatie van request-based access, rolgebaseerde rechten en account-gebaseerde toegang. Gebruikers kunnen toegang aanvragen tot bepaalde accounts, waarna deze – afhankelijk van de configuratie – tijdelijk wordt toegekend. Dit sluit functioneel aan bij het idee van Just-In-Time toegang, maar wordt minder expliciet als afzonderlijke feature gepresenteerd.
+
+Een belangrijk aspect dat tijdens de POC naar voren kwam, is dat Securden de mogelijkheid biedt om gebruikers toegang te geven tot systemen zonder dat zij de onderliggende credentials kunnen bekijken. Dit betekent dat een gebruiker een sessie kan opstarten naar een systeem via bijvoorbeeld RDP of SSH, zonder dat het wachtwoord van het gebruikte account zichtbaar wordt. Deze aanpak is volledig in lijn met het principe van credential vaulting en draagt bij aan het beperken van het risico op credential leakage.
+
+In de praktijk resulteert dit in een model waarbij toegang niet zozeer wordt verleend tot een systeem zelf, maar tot een account dat op dat systeem bestaat. De gebruiker krijgt vervolgens gecontroleerde toegang tot dat account voor een bepaalde periode of actie, zonder permanente rechten en zonder inzage in gevoelige gegevens.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenJIT1.jpg}
+	\caption[User1 kan een aanvraag doen voor een tijdelijke toegang tot de pam Servers via het PAM dev account.]{\label{fig:SecurdenJIT1}User1 kan een aanvraag doen voor een tijdelijke toegang tot de pam Servers via het PAM dev account.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenJIT2.jpg}
+	\caption[Een administrator krijgt een melding dat een gebuiker toegang wilt tot een server.]{\label{fig:SecurdenJIT2}Een administrator krijgt een melding dat een gebuiker toegang wilt tot een server.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenJIT3.jpg}
+	\caption[Een administrator ziet alle geopende requests staan en kijk deze approven of rejecten.]{\label{fig:SecurdenJIT3}Een administrator ziet alle geopende requests staan en kijk deze approven of rejecten.}
+\end{figure}
+
+\subsection{Session logging en recording}
+Session logging en recording vormen een essentieel onderdeel van Privileged Access Management, aangezien ze zorgen voor transparantie, controle en auditmogelijkheden bij het gebruik van privileged accounts. Binnen Securden zijn beide functionaliteiten aanwezig, maar er is een duidelijk onderscheid in implementatie en complexiteit.
+
+Session logging is standaard ingebouwd in de Securden-oplossing en vereist geen bijkomende configuratie of componenten. Alle acties die gebruikers uitvoeren tijdens een sessie worden gelogd, wat toelaat om achteraf activiteiten te analyseren en audittrails op te bouwen. Dit biedt een basisniveau van zichtbaarheid en controle, wat essentieel is binnen een beveiligde omgeving.
+
+Voor session recording ligt dit echter anders. Hoewel Securden deze functionaliteit ondersteunt, is hiervoor de installatie van een bijkomende component vereist, namelijk de Session Manager. Deze component fungeert als tussenlaag die de sessies opzet en tegelijkertijd de mogelijkheid biedt om deze op te nemen en later opnieuw af te spelen. Zonder deze component is het niet mogelijk om volledige sessieopnames te maken.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenLogs.jpg}
+	\caption[Een administrator ziet alle actieve sessies.]{\label{fig:SecurdenLogs}Een administrator ziet alle actieve sessies.}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{SecurdenRecordings.jpg}
+	\caption[Een administrator ziet alle opnames van verlopen sessies.]{\label{fig:SecurdenRecordings}Een administrator ziet alle opnames van verlopen sessies.}
+\end{figure}
+
+\subsection{Credential vaulting}
+Binnen Securden wordt credential vaulting voorzien via een geïntegreerde kluis die centraal beheerd wordt op de Securden server. Alle credentials worden hier versleuteld opgeslagen en zijn niet rechtstreeks zichtbaar voor gebruikers. In plaats daarvan worden deze gegevens enkel gebruikt op het moment dat een sessie wordt opgestart. De Session Manager haalt de benodigde credentials automatisch op uit de vault en injecteert deze in de sessie, zonder dat de gebruiker het wachtwoord effectief te zien krijgt. Deze werkwijze sluit aan bij het principe van secure credential handling en vermindert het risico op misbruik of lekken van gevoelige informatie.
+
+Tijdens de uitvoering van de POC werd duidelijk dat deze aanpak sterk samenhangt met het account-gebaseerde model dat Securden hanteert. Zoals eerder beschreven, wordt toegang niet rechtstreeks toegekend tot een resource, maar tot een account dat gekoppeld is aan die resource. De credential vault vormt hierbij het centrale element waarin deze accounts en hun bijhorende credentials worden beheerd.
+
+In vergelijking met PAM360 valt hier een duidelijk verschil op. PAM360 biedt een meer gecentraliseerde en flexibele credential vault, waarin credentials zoals SSH keys afzonderlijk kunnen worden opgeslagen en nadien gekoppeld kunnen worden aan meerdere resources of accounts. Dit maakt het mogelijk om credentials te hergebruiken en centraal te beheren, wat vooral in grotere omgevingen een belangrijk voordeel vormt. Securden kiest daarentegen voor een eenvoudiger model waarbij credentials direct gekoppeld zijn aan hun gebruikscontext, wat de configuratie overzichtelijk houdt maar minder flexibiliteit biedt.
+\subsection{Toegangscontrole en rollenbeheer}
+Toegangscontrole vormt een essentieel onderdeel van elke Privileged Access Management-oplossing en bepaalt welke gebruikers toegang krijgen tot welke systemen en accounts, onder welke voorwaarden. Binnen Securden wordt deze controle geïmplementeerd via een combinatie van role-based access control (RBAC) en een account-gebaseerd sharingmodel.
+
+Binnen Securden worden gebruikers eerst toegewezen aan een globale rol binnen de applicatie. Deze rollen bepalen wat een gebruiker mag doen binnen het platform zelf. Enkele standaardrollen die beschikbaar zijn:
+\begin{itemize}
+	\item User: basisgebruiker die toegang kan aanvragen en sessies kan starten 
+	\item Auditor: kan logs en sessies bekijken, maar geen wijzigingen uitvoeren 
+	\item Account Manager: beheer van accounts en credentials 
+	\item Administrator / Super Administrator: volledige controle over de omgeving 
+\end{itemize}
+Deze rollen zijn eerder functioneel en applicatiegericht en bepalen dus niet rechtstreeks tot welke systemen een gebruiker toegang heeft, maar wel welke acties hij mag uitvoeren binnen Securden.
+
+De effectieve toegangscontrole tot systemen gebeurt binnen Securden op een tweede niveau, namelijk via het delen van accounts. Zoals zichtbaar in de interface wordt per account expliciet bepaald welke gebruiker toegang krijgt en welke acties toegestaan zijn. Hierbij kan zeer concreet ingesteld worden of een gebruiker een connectie mag openen, de accountgegevens mag bekijken, wijzigingen mag uitvoeren of volledige controle krijgt. Deze rechten worden dus niet op resource-niveau toegekend, maar op het niveau van individuele accounts.
+
+Deze aanpak zorgt ervoor dat toegangscontrole binnen Securden steeds bestaat uit twee lagen. Enerzijds is er de globale rol die bepaalt wat een gebruiker binnen de applicatie kan doen, en anderzijds de specifieke accountrechten die bepalen tot welke systemen effectief toegang mogelijk is. Een belangrijk gevolg hiervan is dat een gebruiker bijvoorbeeld wel een sessie kan starten naar een systeem zonder het bijhorende wachtwoord te kunnen bekijken. Dit sluit nauw aan bij het principe van credential vaulting en verhoogt de beveiliging aanzienlijk.
+
+In vergelijking met PAM360 valt op dat Securden een minder policy-gedreven aanpak hanteert. Waar PAM360 werkt met meer abstracte toegangsregels en rechten op resource-niveau, kiest Securden voor een directer en transparanter model waarbij rechten expliciet per account worden toegekend. Tijdens de POC werd vastgesteld dat deze aanpak initieel minder intuïtief kan zijn, maar wel een duidelijk overzicht biedt van wie toegang heeft tot welke accounts en met welke rechten.
+
+\subsection{Gebruiksgemak en implementatiecomplexiteit}
+Binnen deze proof of concept werd ook aandacht besteed aan het gebruiksgemak en de implementatiecomplexiteit van Securden, waarbij bewust de vergelijking met PAM360 wordt gemaakt. Deze vergelijking is relevant omdat beide oplossingen binnen dezelfde testomgeving werden geïmplementeerd en dus onder gelijkaardige omstandigheden geëvalueerd konden worden.
+
+De initiële installatie van Securden verliep, net zoals bij PAM360, relatief vlot en zonder grote technische obstakels. De oplossing maakt gebruik van een eenvoudige Windows installer waarbij de meeste componenten automatisch worden geïnstalleerd. In vergelijking met PAM360 vereist Securden zelfs nog minder configuratiestappen tijdens de installatie, wat het proces zeer toegankelijk maakt. Waar PAM360 reeds als “straightforward” werd ervaren, voelt Securden nog iets lichter en sneller inzetbaar aan.
+
+Toch verschuift dit beeld wanneer gekeken wordt naar de verdere implementatie. Waar PAM360 meer begeleiding biedt via documentatie en een gestructureerde aanpak (bijvoorbeeld bij resource discovery en policyconfiguratie), vraagt Securden meer manuele configuratie van de beheerder. Dit wordt vooral duidelijk bij het onboarden van resources, waar het ontbreken van automatische network discovery ervoor zorgt dat systemen handmatig toegevoegd moeten worden. Dit verhoogt de implementatie-inspanning, zeker in grotere omgevingen.
+
+Ook op vlak van functionaliteiten werd een verschil in complexiteit vastgesteld. PAM360 biedt een meer uitgebreide en gestructureerde implementatie van bepaalde concepten, zoals Just-In-Time toegang, waarbij verschillende types (access, elevation en applicatiegebaseerd) duidelijk onderscheiden worden. Binnen Securden zijn deze concepten minder expliciet uitgewerkt en eerder geïntegreerd in een eenvoudiger toegangsmodel. Dit maakt de oplossing enerzijds gemakkelijker te begrijpen, maar anderzijds minder krachtig en minder flexibel.
+
+Een gelijkaardige vaststelling werd gedaan bij session management. Waar PAM360 standaard zowel session logging als recording aanbiedt zonder bijkomende configuratie, vereist Securden voor recording de installatie van een extra component, namelijk de Session Manager. Dit verhoogt de implementatiecomplexiteit en kan extra troubleshooting vereisen, wat tijdens de POC effectief werd ervaren.
+
+Op vlak van gebruiksgemak werd Securden over het algemeen als duidelijk en overzichtelijk ervaren. De interface is eenvoudig opgebouwd en de belangrijkste functionaliteiten zijn snel terug te vinden. De account-gebaseerde aanpak zorgt voor transparantie in toegangsbeheer, aangezien duidelijk zichtbaar is welke gebruiker toegang heeft tot welke account. In vergelijking met PAM360, waar gewerkt wordt met meer abstracte policies, kan dit model zelfs intuïtiever aanvoelen eens het concept begrepen is.
+
+Tegelijkertijd werd vastgesteld dat deze eenvoud ook beperkingen met zich meebrengt. PAM360 biedt meer flexibiliteit en diepgang, bijvoorbeeld op vlak van credential management en herbruikbaarheid van credentials, terwijl Securden eerder een directe en minder modulaire aanpak hanteert. Daarnaast geeft PAM360 meer feedback aan de gebruiker via logging en interface-elementen, wat troubleshooting vereenvoudigt.
+
+Een belangrijk gelijkaardig aandachtspunt bij beide oplossingen is de afhankelijkheid van een correct geconfigureerde Active Directory-omgeving. Zoals eerder vastgesteld, kunnen instellingen zoals vervallen wachtwoorden of verplichte wachtwoordwijzigingen een directe impact hebben op de toegang tot de PAM oplossing. Dit benadrukt dat de complexiteit niet enkel in de tool zelf zit, maar ook in de onderliggende infrastructuur. 
+
+Op basis van deze bevindingen kan geconcludeerd worden dat Securden een zeer toegankelijke en relatief eenvoudig te implementeren PAM oplossing is, vooral geschikt voor kleinere omgevingen of snelle evaluaties. In vergelijking met PAM360 ligt de nadruk sterker op eenvoud en directe configuratie, terwijl PAM360 meer flexibiliteit, automatisatie en diepgang biedt. Dit maakt PAM360 beter geschikt voor complexere omgevingen, terwijl Securden uitblinkt in snelle inzetbaarheid en gebruiksgemak.
+

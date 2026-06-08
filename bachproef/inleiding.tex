@@ -5,32 +5,63 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+Privileged access verwijst naar toegang tot IT-systemen met verhoogde rechten, waarbij bepaalde gebruikers uitgebreide rechten krijgen om systeemconfiguraties te wijzigen en kritieke infrastructuur te beheren(\cite{koot2024pam}). Dergelijke toegang wordt typisch toegekend aan systeem- en netwerkbeheerders. Omdat deze accounts uitgebreide bevoegdheden hebben, vormen ze een aantrekkelijk doelwit voor cyberaanvallen en vormen ze tegelijk een potentieel risico bij interne fouten of misbruik (\cite{keepersecurity2025risicos}). Het correct beheren en beveiligen van privileged access is daarom een essentieel onderdeel van moderne cybersecurity (\cite{keepersecurity2025risicos}). 
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+Binnen hedendaagse IT-omgevingen maken beheerders dagelijks gebruik van protocollen zoals Secure Shell (SSH) en Remote Desktop Protocol (RDP) om servers en andere systemen te beheren (\cite{rfc4251}, \cite{microsoft_rdp}). Deze vormen van toegang vereisen doorgaans verhoogde rechten en worden vaak gebruikt in kritieke infrastructuren. Wanneer dergelijke toegang onvoldoende wordt gecontroleerd, gelogd of langdurig actief blijft, neemt het risico op beveiligingsincidenten aanzienlijk toe. Dit kan leiden tot ongeautoriseerde wijzigingen, datalekken of zelfs volledige compromitteren van systemen zoals beschreven in figuur \ref{fig:attackchain}.
+
+\begin{figure}[H]
+
+	\centering
+	\includegraphics[width=0.8\textwidth]{attackchain.png}
+	\caption[Understanding the attack chain (\cite{cyberark_blueprint}).]{\label{fig:attackchain}Understanding the attack chain (\cite{cyberark_blueprint}).}
+\end{figure}
+
+
+De aanleiding voor dit onderzoek ontstond tijdens gesprekken met medewerkers van Ahold Delhaize Group. Binnen de organisatie werd een uitgebreid Privileged Access Management-programma uitgewerkt om privileged toegang binnen een complexe internationale IT-omgeving beter te controleren en te standaardiseren. Daarbij werd niet alleen gefocust op technische beveiliging, maar ook op governance, compliance, auditing, onboarding en gecontroleerde toegang tot kritieke systemen. De operationele en strategische uitdagingen binnen deze omgeving vormden een belangrijke inspiratiebron voor de casestudies binnen deze bachelorproef. 
+
+Privileged Access Management biedt een oplossing door processen die zich richten op het beveiligen, beheren en monitoren van administrator accounts (\cite{garbis2021zero}). Deze oplossingen maken het mogelijk om toegangsrechten tijdelijk toe te kennen, sessies te registreren, wachtwoorden centraal te beheren en afwijkend gedrag sneller te detecteren. Hierdoor kunnen organisaties zowel hun cybersecurity verhogen als beter inzicht krijgen in het gebruik van kritieke toegangsrechten.
+
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+Op basis van bovenstaande probleemstelling wordt volgende onderzoeksvraag geformuleerd:
+Hoe kan een Privileged Access Management tool bijdragen aan de beveiliging van servertoegang via SSH en RDP binnen een bedrijfsnetwerk?
+Om deze onderzoeksvraag te beantwoorden, worden volgende deelvragen onderzocht:
+
+\begin{itemize}
+	\item Welke beveiligingsrisico’s zijn verbonden aan langdurige en ongelogde beheertoegang tot servers via SSH en RDP?
+	\item Welke functionaliteiten bieden Privileged Access Management oplossingen om tijdelijke en gelogde beheertoegang af te dwingen?
+	\item In welke mate verschillen PAM oplossingen van elkaar op het vlak van sessielogging en sessierecording?
+	\item Hoe ondersteunen PAM oplossingen Just-in-Time toegang en het principe van Zero Standing Privileges?
+	\item In welke mate kan een PAM oplossing praktisch worden toegepast om beheertoegang tot servers via SSH en RDP te beveiligen binnen een proof-of-concept?
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+Het doel van deze bachelorproef is om te onderzoeken hoe beheertoegang tot servers beter kan worden beveiligd door het gebruik van PAM tools. Meer specifiek, op beheertoegang tot servers via SSH en RDP binnen on-premise bedrijfsnetwerken. Dit gebeurt enerzijds via een literatuurstudie en marktanalyse van bestaande PAM tools. Hierin worden marktleiders, niche spelers en uitdagers vergeleken.  Anderzijds via een proof of concept waarin twee PAM oplossingen praktisch worden getest en vergeleken. De geteste PAM oplossingen zijn meer gericht naar kleine en middelgrote bedrijven. Op basis daarvan wordt nagegaan welke functionaliteiten relevant zijn voor organisaties en welke oplossingen het meest geschikt zijn voor verschillende IT-omgevingen. Hierbij wordt eveneens onderzocht hoe enterprise-organisaties zoals Ahold Delhaize PAM-capabilities prioriteren op basis van risico, governance, operationele impact en implementatiecomplexiteit.
+
+Het onderzoek wordt als succesvol beschouwd indien:
+\begin{itemize}
+	\item 	De belangrijkste beveiligingsrisico’s rond SSH- en RDP-beheertoegang duidelijk geïdentificeerd en onderbouwd worden.
+	\item	Een objectieve vergelijking van PAM oplossingen wordt opgesteld op basis van vooraf gedefinieerde criteria.
+	\item	In de proof of concept aangetoond wordt dat:
+	\begin{itemize}	
+		\item	Langdurige beheerdersrechten kunnen worden vermeden.
+		\item	Just-in-Time toegang effectief kan worden afgedwongen.
+		\item	Alle beheerderssessies worden gelogd en, indien mogelijk, opgenomen.
+		\item	Directe, onbeheerde toegang tot servers kan worden geblokkeerd.
+	\end{itemize}
+	\item	De praktische verschillen tussen de geteste PAM oplossingen duidelijk worden geanalyseerd.
+	\item	De centrale onderzoeksvraag onderbouwd en concreet wordt beantwoord.
+	
+	
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -39,12 +70,20 @@ Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor suc
 % geven van de opbouw van de rest van de tekst. Deze sectie bevat al een aanzet
 % die je kan aanvullen/aanpassen in functie van je eigen tekst.
 
-De rest van deze bachelorproef is als volgt opgebouwd:
+Deze bachelorproef is als volgt opgebouwd. 
+In hoofdstuk~\ref{ch:stand-van-zaken}  wordt de stand van zaken besproken, waarbij de relevante literatuur, internationale richtlijnen en marktanalyses rond Privileged Access Management worden geanalyseerd. Dit hoofdstuk vormt de theoretische basis voor het verdere onderzoek.
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
 
-In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
+In hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht. Hierin wordt beschreven hoe het onderzoek werd opgezet, welke fasen werden doorlopen en welke onderzoekstechnieken werden toegepast.
 
-% TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+In hoofdstuk~\ref{ch:casestudie} worden twee praktijkgerichte casestudies uitgewerkt. De eerste casestudie behandelt de strategische heroriëntatie van de PAM-omgeving binnen Ahold Delhaize en onderzoekt hoe PAM-capabilities worden geprioriteerd op basis van governance, beveiliging, compliance en operationele efficiëntie. De tweede casestudie focust op de operationele implementatie van CyberArk binnen een storageomgeving en vertaalt deze strategische keuzes naar concrete technische vereisten en dagelijkse beheerprocessen.
 
-In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
+Hoofdstuk~\ref{ch:vergelijkende-Studie} bevat de vergelijkende studie van geselecteerde PAM vendors op basis van literatuur en marktanalyses. In dit hoofdstuk worden de functionele verschillen tussen de oplossingen systematisch geanalyseerd.
+
+
+In hoofdstuk~\ref{ch:proof-of-concept} wordt de proof of concept uitgewerkt, waarin twee PAM oplossingen technisch worden geïmplementeerd en getest binnen een gecontroleerde omgeving.
+
+
+Hoofdstuk~\ref{ch:vergelijkende-Studie-met-poc} bespreekt de resultaten van de proof of concept en vergelijkt beide oplossingen op basis van vooraf bepaalde criteria.
+
+Tot slot worden in hoofdstuk~\ref{ch:conclusie} de conclusies geformuleerd, wordt de centrale onderzoeksvraag beantwoord en worden aanbevelingen gedaan voor praktijktoepassing en verder onderzoek.
