@@ -24,7 +24,7 @@
 % abstract. Zet in commentaar als je dit niet wilt.
 \specialisation{Systeem- en Netwerkbeheer}
 \keywords{Privileged Access Management, PAM, Serverbeveiliging, Zero Trust, NIS2}
-\projectrepo{https://github.com/user/repo}
+\projectrepo{https://github.com/Urky007/bachproef}
 
 \begin{document}
 
@@ -48,9 +48,15 @@ Belangrijke PAM-functionaliteiten zijn onder andere credential vaulting, session
 
 \section{Experimenten}
 
-Het onderzoek bestond uit twee onderdelen.
+Het onderzoek bestond uit drie onderdelen.
+Eerst werd er een literatuurstudie uitgevoerd om  een accuraad beeld te schetsen over de huidige stand van zaken omtrend PAM. Hierbij werd gebruik gemaakt van toonaangevende studies zoals Gartner en KuppingerCole.
+\begin{center}
+	\captionsetup{type=figure}
+	\includegraphics[width=0.4\linewidth]{MagicQuadrant.png}
+	\captionof{figure}{De Gartner Magic Quadrant.}
+\end{center}
 
-Enerzijds werd een vergelijkende studie uitgevoerd van vier PAM-oplossingen:
+Daarna werd een vergelijkende studie uitgevoerd van vier PAM-oplossingen:
 \begin{itemize}
 	\item CyberArk
 	\item BeyondTrust
@@ -60,8 +66,13 @@ Enerzijds werd een vergelijkende studie uitgevoerd van vier PAM-oplossingen:
 
 Deze oplossingen werden geëvalueerd op basis van criteria zoals credential vaulting, session management, just-in-time access, toegangscontrole, Active Directory-integratie en implementatiecomplexiteit.
 
-Anderzijds werd een proof-of-concept opgezet waarbij PAM360 en Securden werden geïmplementeerd in een gecontroleerde testomgeving. Hiervoor werd een gesegmenteerd netwerk ingericht met Windows- en Linux-servers, Active Directory en een Fortinet-firewall.
+Ten slotte werd een proof-of-concept opgezet waarbij PAM360 en Securden werden geïmplementeerd in een gecontroleerde testomgeving. Hiervoor werd een gesegmenteerd netwerk ingericht met Windows- en Linux-servers, Active Directory en een Fortinet-firewall.
 
+\begin{center}
+	\captionsetup{type=figure}
+	\includegraphics[width=0.55\linewidth]{Architectuurschema.png}
+	\captionof{figure}{Architectuuroverzicht van de proof-of-concept omgeving.}
+\end{center}
 Tijdens de proof-of-concept werden onder andere SSH- en RDP-toegang, credential vaulting, sessieregistratie en rapportering getest.
 
 
